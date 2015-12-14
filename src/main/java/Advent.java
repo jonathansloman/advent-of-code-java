@@ -1,8 +1,18 @@
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import java.security.*;
-import java.math.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Advent
 {
@@ -699,8 +709,46 @@ public class Advent
 		System.out.println("Next password is: " + new String(list));
 	}
 
-	public void day12()
+	private int jsonCounter(JsonElement element) {
+		int total = 0;
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber())
+		{
+			total += element.getAsJsonPrimitive().getAsInt();
+		} else if (element.isJsonArray())
+		{
+			for (JsonElement e : element.getAsJsonArray())
+			{
+				total += jsonCounter(e);
+			}
+		} else if (element.isJsonObject())
+		{
+			JsonObject o = element.getAsJsonObject();
+			boolean hasRed = false;
+			for (Map.Entry<String, JsonElement> e : o.entrySet())
+			{
+				if (e.getValue().isJsonPrimitive() && 
+						e.getValue().getAsJsonPrimitive().getAsString().equals("red"))
+				{
+					hasRed = true; // comment out for part 1
+				} else
+				{
+					total += jsonCounter(e.getValue());
+				}
+			}
+			if (hasRed)
+			{
+				total = 0;
+			}
+		}
+		return total;
+	}
+	
+	public void day12() throws Exception
 	{
-		// JsonParser parser = Json.createParser(new FileReader("day12.input"));
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(new FileReader("src/main/resources/day12.input"));
+		int total = jsonCounter(element);
+		
+		System.out.println("Total is: " + total);
 	}
 }

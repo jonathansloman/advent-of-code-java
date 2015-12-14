@@ -19,3 +19,8 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.0'
     testCompile 'junit:junit:4.11'
 }
+
+task(runAdvent, dependsOn: 'classes', type: JavaExec) {
+	main = 'Advent'
+	classpath = sourceSets.main.runtimeClasspath
+}

@@ -1,0 +1,20 @@
+apply plugin: 'java'
+
+repositories {
+	mavenLocal()
+	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/groups/public' }
+	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/repositories/snapshots' }
+}
+
+sourceCompatibility = 1.7
+version = '1.0.0'
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-core:2.4.0'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.0'
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.0'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.4.0'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.0'
+    testCompile 'junit:junit:4.11'
+}

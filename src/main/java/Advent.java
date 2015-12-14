@@ -14,10 +14,11 @@ public class Advent
 
 	public static void main(String[] args) throws Exception
 	{
+		System.out.println("dir is: " + System.getProperty("user.dir"));	
 		System.out.println("Started: ");
 		Advent a = new Advent();
 		startTime = System.currentTimeMillis();
-		/*	a.day1();
+			a.day1();
 		a.day2();
 		a.day3();
 		//	a.day4();
@@ -27,14 +28,14 @@ public class Advent
 		a.day8();
 		a.day9();
 		a.day10();
-		a.day11();*/
+		a.day11();
 		a.day12();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
 	public void day1() throws IOException
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day1.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day1.input"));
 		String input = br.readLine();
 		br.close();
 		int floor = 0;
@@ -58,7 +59,7 @@ public class Advent
 
 	public void day2() throws IOException
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day2.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day2.input"));
 		String line = null;
 		int total = 0;
 		int ribbon = 0;
@@ -92,7 +93,7 @@ public class Advent
 	{
 		Map<String, Integer> locations = new HashMap<String, Integer>();
 		Map<String, Integer> locations2 = new HashMap<String, Integer>();
-		BufferedReader br = new BufferedReader(new FileReader("day3.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day3.input"));
 		String line = null;
 		int x = 0;
 		int y = 0;
@@ -212,7 +213,7 @@ public class Advent
 
 	public void day5() throws Exception
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day5.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day5.input"));
 		String line = null;
 		int total = 0;
 		int total2 = 0;
@@ -283,7 +284,7 @@ public class Advent
 
 	public void day6() throws Exception
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day6.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day6.input"));
 		String line = null;
 		boolean[][] grid = new boolean[1000][1000];
 		int[][] grid2 = new int[1000][1000];
@@ -416,7 +417,7 @@ public class Advent
 	public void day7() throws Exception
 	{
 		// change b in input to output for a for second part
-		BufferedReader br = new BufferedReader(new FileReader("day7.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day7.input"));
 		String line = null;
 		Map<String, Operation> operations = new HashMap<String, Operation>();
 		while ((line = br.readLine()) != null)
@@ -493,7 +494,7 @@ public class Advent
 
 	public void day8() throws Exception
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day8.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day8.input"));
 		String line = null;
 		int literaltotal = 0;
 		int memorytotal = 0;
@@ -582,7 +583,7 @@ public class Advent
 
 	public void day9() throws Exception
 	{
-		BufferedReader br = new BufferedReader(new FileReader("day9.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day9.input"));
 		String line = null;
 		Map<String, Integer> distances = new HashMap<String, Integer>();
 		Set<String> places = new HashSet<String>();

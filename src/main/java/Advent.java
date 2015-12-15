@@ -3,8 +3,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -24,23 +26,24 @@ public class Advent
 
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println("dir is: " + System.getProperty("user.dir"));	
+		System.out.println("dir is: " + System.getProperty("user.dir"));
 		System.out.println("Started: ");
 		Advent a = new Advent();
 		startTime = System.currentTimeMillis();
-			a.day1();
-		a.day2();
-		a.day3();
-		//	a.day4();
-		a.day5();
-		a.day6();
-		a.day7();
-		a.day8();
-		a.day9();
-		a.day10();
-		a.day11();
-		a.day12();
-		a.day13();
+		// a.day1();
+		// a.day2();
+		// a.day3();
+		// a.day4();
+		// a.day5();
+		// a.day6();
+		// a.day7();
+		// a.day8();
+		// a.day9();
+		// a.day10();
+		// a.day11();
+		// a.day12();
+		// a.day13();
+		a.day14();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -710,7 +713,8 @@ public class Advent
 		System.out.println("Next password is: " + new String(list));
 	}
 
-	private int jsonCounter(JsonElement element) {
+	private int jsonCounter(JsonElement element)
+	{
 		int total = 0;
 		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber())
 		{
@@ -727,8 +731,8 @@ public class Advent
 			boolean hasRed = false;
 			for (Map.Entry<String, JsonElement> e : o.entrySet())
 			{
-				if (e.getValue().isJsonPrimitive() && 
-						e.getValue().getAsJsonPrimitive().getAsString().equals("red"))
+				if (e.getValue().isJsonPrimitive()
+						&& e.getValue().getAsJsonPrimitive().getAsString().equals("red"))
 				{
 					hasRed = true; // comment out for part 1
 				} else
@@ -743,24 +747,27 @@ public class Advent
 		}
 		return total;
 	}
-	
+
 	public void day12() throws Exception
 	{
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(new FileReader("src/main/resources/day12.input"));
 		int total = jsonCounter(element);
-		
+
 		System.out.println("Total is: " + total);
 	}
-	
-	private int findBest(Set<String> names, Map<String, Integer> happy, String firstName, String prevName) {
+
+	private int findBest(Set<String> names, Map<String, Integer> happy, String firstName,
+			String prevName)
+	{
 		if (names.size() == 1)
 		{
 			String name = names.iterator().next();
-			return happy.get(name + "-" + prevName) + happy.get(name + "-" + firstName) + happy.get(prevName + "-" + name) + happy.get(firstName + "-" + name);
+			return happy.get(name + "-" + prevName) + happy.get(name + "-" + firstName)
+					+ happy.get(prevName + "-" + name) + happy.get(firstName + "-" + name);
 		}
 		int best = -9999999;
-		for (String name : names) 
+		for (String name : names)
 		{
 			String nextFirst;
 			if (firstName == null)
@@ -773,7 +780,7 @@ public class Advent
 			int h = 0;
 			if (prevName != null)
 			{
-				h = happy.get(name+"-"+prevName) + happy.get(prevName + "-" + name);
+				h = happy.get(name + "-" + prevName) + happy.get(prevName + "-" + name);
 			}
 			Set<String> remaining = new HashSet<String>(names);
 			remaining.remove(name);
@@ -785,7 +792,7 @@ public class Advent
 		}
 		return best;
 	}
-	
+
 	public void day13() throws Exception
 	{
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day13.input"));
@@ -795,7 +802,8 @@ public class Advent
 		while ((line = br.readLine()) != null)
 		{
 			line = line.trim();
-			Pattern p = Pattern.compile("([A-Za-z]+) would (gain|lose) (\\d+) happiness units by sitting next to ([A-Za-z]+).");
+			Pattern p = Pattern
+					.compile("([A-Za-z]+) would (gain|lose) (\\d+) happiness units by sitting next to ([A-Za-z]+).");
 			Matcher m = p.matcher(line);
 			m.find();
 			String name1 = m.group(1);
@@ -807,7 +815,7 @@ public class Advent
 			happy.put(name1 + "-" + name2, amount);
 		}
 		br.close();
-		
+
 		System.out.println("best seating is: " + findBest(names, happy, null, null));
 		for (String name : names)
 		{
@@ -816,6 +824,83 @@ public class Advent
 		}
 		names.add("Me");
 		System.out.println("best seating2 is: " + findBest(names, happy, null, null));
+	}
 
+	
+	class Reindeer
+	{
+		String name;
+		int speed;
+		int flytime;
+		int resttime;
+		int points = 0;
+		int currentdistance = 0;
+		
+		public int distanceAt(int time)
+		{
+			int fullcycles = time / (flytime + resttime);
+			int remainder = time % (flytime + resttime);
+			if (remainder > flytime)
+			{
+				remainder = flytime;
+			}
+			currentdistance = (flytime * fullcycles + remainder) * speed;
+			return currentdistance;
+		}
+	}
+	
+	public void day14() throws Exception
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day14.input"));
+		String line = null;
+		int furthest = 0;
+		int totaltime  = 2503;
+		List<Reindeer> reindeer = new ArrayList<Reindeer>();
+		while ((line = br.readLine()) != null)
+		{
+			line = line.trim();
+			Pattern p = Pattern
+					.compile("([A-Za-z]+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.");
+			Matcher m = p.matcher(line);
+			m.find();
+			Reindeer r = new Reindeer();
+			r.name = m.group(1);
+			r.speed = Integer.parseInt(m.group(2));
+			r.flytime = Integer.parseInt(m.group(3));
+			r.resttime = Integer.parseInt(m.group(4));
+			reindeer.add(r);
+			if (r.distanceAt(totaltime) > furthest)
+			{
+				furthest = r.distanceAt(totaltime);
+			}
+		}
+		br.close();
+		for (int time = 1; time <= totaltime; time++) {
+			int leaddistance = 0;
+			for (Reindeer r : reindeer)
+			{
+				int dist = r.distanceAt(time);
+				if (dist > leaddistance)
+				{
+					leaddistance = dist;
+				}
+			}
+			for (Reindeer r : reindeer)
+			{
+				if (r.currentdistance == leaddistance)
+				{
+					r.points++;
+				}
+			}
+		}
+		int maxpoints = 0;
+		for (Reindeer r : reindeer)
+		{
+			if (r.points > maxpoints)
+			{
+				maxpoints = r.points;
+			}
+		}
+		System.out.println("Furthest is: " + furthest + " max points is: " + maxpoints);
 	}
 }

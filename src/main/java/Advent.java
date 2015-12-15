@@ -40,6 +40,7 @@ public class Advent
 		a.day10();
 		a.day11();
 		a.day12();
+		a.day13();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -750,5 +751,71 @@ public class Advent
 		int total = jsonCounter(element);
 		
 		System.out.println("Total is: " + total);
+	}
+	
+	private int findBest(Set<String> names, Map<String, Integer> happy, String firstName, String prevName) {
+		if (names.size() == 1)
+		{
+			String name = names.iterator().next();
+			return happy.get(name + "-" + prevName) + happy.get(name + "-" + firstName) + happy.get(prevName + "-" + name) + happy.get(firstName + "-" + name);
+		}
+		int best = -9999999;
+		for (String name : names) 
+		{
+			String nextFirst;
+			if (firstName == null)
+			{
+				nextFirst = name;
+			} else
+			{
+				nextFirst = firstName;
+			}
+			int h = 0;
+			if (prevName != null)
+			{
+				h = happy.get(name+"-"+prevName) + happy.get(prevName + "-" + name);
+			}
+			Set<String> remaining = new HashSet<String>(names);
+			remaining.remove(name);
+			h += findBest(remaining, happy, nextFirst, name);
+			if (h > best)
+			{
+				best = h;
+			}
+		}
+		return best;
+	}
+	
+	public void day13() throws Exception
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day13.input"));
+		String line = null;
+		Map<String, Integer> happy = new HashMap<String, Integer>();
+		Set<String> names = new HashSet<String>();
+		while ((line = br.readLine()) != null)
+		{
+			line = line.trim();
+			Pattern p = Pattern.compile("([A-Za-z]+) would (gain|lose) (\\d+) happiness units by sitting next to ([A-Za-z]+).");
+			Matcher m = p.matcher(line);
+			m.find();
+			String name1 = m.group(1);
+			int sign = m.group(2).equals("gain") ? 1 : -1;
+			int amount = Integer.parseInt(m.group(3)) * sign;
+			String name2 = m.group(4);
+			names.add(name1);
+			names.add(name2);
+			happy.put(name1 + "-" + name2, amount);
+		}
+		br.close();
+		
+		System.out.println("best seating is: " + findBest(names, happy, null, null));
+		for (String name : names)
+		{
+			happy.put("Me-" + name, 0);
+			happy.put(name + "-Me", 0);
+		}
+		names.add("Me");
+		System.out.println("best seating2 is: " + findBest(names, happy, null, null));
+
 	}
 }

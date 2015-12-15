@@ -44,6 +44,7 @@ public class Advent
 		// a.day12();
 		// a.day13();
 		a.day14();
+		a.day15();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -826,7 +827,6 @@ public class Advent
 		System.out.println("best seating2 is: " + findBest(names, happy, null, null));
 	}
 
-	
 	class Reindeer
 	{
 		String name;
@@ -835,7 +835,7 @@ public class Advent
 		int resttime;
 		int points = 0;
 		int currentdistance = 0;
-		
+
 		public int distanceAt(int time)
 		{
 			int fullcycles = time / (flytime + resttime);
@@ -848,13 +848,13 @@ public class Advent
 			return currentdistance;
 		}
 	}
-	
+
 	public void day14() throws Exception
 	{
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day14.input"));
 		String line = null;
 		int furthest = 0;
-		int totaltime  = 2503;
+		int totaltime = 2503;
 		List<Reindeer> reindeer = new ArrayList<Reindeer>();
 		while ((line = br.readLine()) != null)
 		{
@@ -875,7 +875,8 @@ public class Advent
 			}
 		}
 		br.close();
-		for (int time = 1; time <= totaltime; time++) {
+		for (int time = 1; time <= totaltime; time++)
+		{
 			int leaddistance = 0;
 			for (Reindeer r : reindeer)
 			{
@@ -902,5 +903,82 @@ public class Advent
 			}
 		}
 		System.out.println("Furthest is: " + furthest + " max points is: " + maxpoints);
+	}
+
+	class Ingredient
+	{
+		String name;
+		int capacity;
+		int durability;
+		int flavour;
+		int texture;
+		int calories;
+	}
+
+	int findBest(List<Ingredient> ingredients, int index, int amountleft, List<Integer> amounts)
+	{
+		int best = 0;
+		if (index < ingredients.size() - 1)
+		{
+			for (int i = 0; i <= amountleft; i++)
+			{
+				amounts.add(index, i);
+				int innerbest = findBest(ingredients, index + 1, amountleft - i, amounts);
+				if (innerbest > best)
+				{
+					best = innerbest;
+				}
+			}
+			return best;
+		} else
+		{
+			amounts.add(index, amountleft);
+			int cap = 0;
+			int dur = 0;
+			int fla = 0;
+			int tex = 0;
+			int cal = 0;
+			for (int i = 0; i < ingredients.size(); i++) 
+			{
+				cap += ingredients.get(i).capacity * amounts.get(i);
+				dur += ingredients.get(i).durability * amounts.get(i);
+				fla += ingredients.get(i).flavour * amounts.get(i);
+				tex += ingredients.get(i).texture * amounts.get(i);
+				cal += ingredients.get(i).calories * amounts.get(i);
+			}
+			if (cap <= 0 || dur <= 0 || fla <= 0 || tex <= 0 || cal != 500)
+			{
+				return 0;
+			} else
+			{
+				return cap * dur * fla * tex;
+			}
+		}
+	}
+
+	public void day15() throws Exception
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day15.input"));
+		String line = null;
+		List<Ingredient> ingredients = new ArrayList<Ingredient>();
+		while ((line = br.readLine()) != null)
+		{
+			line = line.trim();
+			Pattern p = Pattern
+					.compile("([A-Za-z]+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)");
+			Matcher m = p.matcher(line);
+			m.find();
+			Ingredient ing = new Ingredient();
+			ing.name = m.group(1);
+			ing.capacity = Integer.parseInt(m.group(2));
+			ing.durability = Integer.parseInt(m.group(3));
+			ing.flavour = Integer.parseInt(m.group(4));
+			ing.texture = Integer.parseInt(m.group(5));
+			ing.calories = Integer.parseInt(m.group(6));
+			ingredients.add(ing);
+		}
+		br.close();
+		System.out.println("bestScore: "
+				+ findBest(ingredients, 0, 100, new ArrayList<Integer>(ingredients.size())));
 	}
 }

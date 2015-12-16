@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,8 +44,9 @@ public class Advent
 		// a.day11();
 		// a.day12();
 		// a.day13();
-		a.day14();
-		a.day15();
+		//a.day14();
+		//a.day15();
+		a.day16();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -980,5 +982,105 @@ public class Advent
 		br.close();
 		System.out.println("bestScore: "
 				+ findBest(ingredients, 0, 100, new ArrayList<Integer>(ingredients.size())));
+	}
+	
+	public class Sue {
+		int num;
+		int children = -1;
+		int cats = -1;
+		int samoyeds = -1;
+		int pomeranians = -1;
+		int akitas = -1;
+		int vizslas = -1;
+		int goldfish = -1;
+		int trees = -1;
+		int cars = -1;
+		int perfumes = -1;
+		
+		boolean matches(Sue s)
+		{
+			if (children != -1 && s.children != -1 && s.children != children) return false;
+			if (cats != -1 && s.cats != -1 && s.cats != cats) return false;
+			if (samoyeds != -1 && s.samoyeds != -1 && s.samoyeds != samoyeds) return false;
+			if (akitas != -1 && s.akitas != -1 && s.akitas != akitas) return false;
+			if (vizslas != -1 && s.vizslas != -1 && s.vizslas != vizslas) return false;
+			if (goldfish != -1 && s.goldfish != -1 && s.goldfish != goldfish) return false;
+			if (trees != -1 && s.trees != -1 && s.trees != trees) return false;
+			if (cars != -1 && s.cars != -1 && s.cars != cars) return false;
+			if (perfumes != -1 && s.perfumes != -1 && s.perfumes != perfumes) return false;
+			if (pomeranians != -1 && s.pomeranians != -1 && s.pomeranians != pomeranians) return false;
+			return true;
+		}
+		boolean matches2(Sue s)
+		{
+			if (children != -1 && s.children != -1 && s.children != children) return false;
+			if (cats != -1 && s.cats != -1 && s.cats <= cats) return false;
+			if (samoyeds != -1 && s.samoyeds != -1 && s.samoyeds != samoyeds) return false;
+			if (akitas != -1 && s.akitas != -1 && s.akitas != akitas) return false;
+			if (vizslas != -1 && s.vizslas != -1 && s.vizslas != vizslas) return false;
+			if (goldfish != -1 && s.goldfish != -1 && s.goldfish >= goldfish) return false;
+			if (trees != -1 && s.trees != -1 && s.trees <= trees) return false;
+			if (cars != -1 && s.cars != -1 && s.cars != cars) return false;
+			if (perfumes != -1 && s.perfumes != -1 && s.perfumes != perfumes) return false;
+			if (pomeranians != -1 && s.pomeranians != -1 && s.pomeranians >= pomeranians) return false;
+			return true;
+		}
+	}
+	
+	public void day16() throws Exception
+	{
+		Sue target = new Sue();
+		target.children = 3;
+		target.cats = 7;
+		target.samoyeds = 2;
+		target.pomeranians = 3;
+		target.akitas = 0;
+		target.vizslas = 0;
+		target.goldfish = 5;
+		target.trees = 3;
+		target.cars = 2;
+		target.perfumes = 1;
+		
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day16.input"));
+		String line = null;
+		List<Sue> sues = new ArrayList<Sue>();
+		while ((line = br.readLine()) != null)
+		{
+			line = line.trim();
+			Pattern p = Pattern
+					.compile("Sue (\\d+):( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?");
+			Matcher m = p.matcher(line);
+			m.find();
+			Sue s = new Sue();
+			s.num = Integer.parseInt(m.group(1));
+			int counter = 2;
+			while (m.group(counter) != null)
+			{
+				String thing = m.group(counter + 1);
+				int amount = Integer.parseInt(m.group(counter + 2));
+				counter += 3;
+				if (thing.equals("children")) s.children = amount;
+				if (thing.equals("cats")) s.cats = amount;
+				if (thing.equals("samoyeds")) s.samoyeds = amount;
+				if (thing.equals("pomeranians")) s.pomeranians = amount;
+				if (thing.equals("akitas")) s.akitas = amount;
+				if (thing.equals("vizslas")) s.vizslas = amount;
+				if (thing.equals("goldfish")) s.goldfish = amount;
+				if (thing.equals("trees")) s.trees = amount;
+				if (thing.equals("cars")) s.cars = amount;
+				if (thing.equals("perfumes")) s.perfumes = amount;
+			}
+			sues.add(s);
+			if (target.matches(s))
+			{
+				System.out.println("Got match: " + s.num);
+			}
+			if (target.matches2(s))
+			{
+				System.out.println("Got match2: " + s.num);
+			}
+		}
+		br.close();
+		System.out.println("Sues: " + sues.size());
 	}
 }

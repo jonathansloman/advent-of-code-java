@@ -48,6 +48,7 @@ public class Advent
 		//a.day15();
 		a.day16();
 		a.day17();
+		a.day18();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1122,5 +1123,98 @@ public class Advent
 		List<Integer> containers = Arrays.asList(new Integer[]{11,30,47,31,32,36,3,1,5,3,32,36,15,11,46,26,28,1,19,3});
 		int total = findContainers(150, containers, 0);
 		System.out.println("Total is: " + total + " mincount is: " + minCount);
+	}
+	
+	int countNeighbours(boolean[][]grid, int x, int y)
+	{
+		int count = 0;
+		for (int i = x - 1; i <= x + 1; i++)
+		{
+			for (int j = y - 1; j <= y + 1; j++)
+			{
+				if (i >= 0 && i < 100 && j >= 0 && j < 100 && (i != x || j != y))
+				{
+					if (grid[i][j]) {
+						count++;
+					}
+				}
+			}
+		}
+		return count;
+	}
+	
+	private void doStep(boolean[][] source, boolean[][] dest)
+	{
+		for (int x = 0; x < source.length; x++)
+		{
+			for (int y = 0; y < source[x].length; y++)
+			{
+				int neighbours = countNeighbours(source, x, y);
+				if (neighbours == 3) 
+				{
+					dest[x][y] = true;
+				} else if (neighbours == 2 && source[x][y]) 
+				{
+					dest[x][y] = true;
+				} else
+				{
+					dest[x][y] = false;
+				}
+			}
+		}
+	}
+	
+	private void cornerOn(boolean[][]grid)
+	{
+		grid[0][0] = true;
+		grid[99][0] = true;
+		grid[99][99] = true;
+		grid[0][99] = true;
+	}
+	
+	public void day18() throws Exception
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day18.input"));
+		String line = null;
+		boolean[][] state = new boolean[100][100];
+		boolean[][] state2 = new boolean[100][100];
+		int y = 0;
+		while ((line = br.readLine()) != null)
+		{
+			for (int x = 0; x < 100; x++)
+			{
+				if (line.charAt(x) == '#') {
+					state[y][x] = true;
+				} else {
+					state[y][x] = false;
+				}
+			}
+			y++;
+		}
+		br.close();
+		cornerOn(state);
+		for (int steps = 0; steps < 100; steps += 2)
+		{
+			doStep(state, state2);
+			cornerOn(state2);
+			doStep(state2, state);
+			cornerOn(state);
+		}
+		int count = 0;
+		for (y = 0; y < 100; y++)
+		{
+			for (int x = 0; x < 100; x++)
+			{
+				if (state[y][x]) {
+					count++;
+					System.out.print('#');
+				} else
+				{
+					System.out.print('.');
+				}
+			}
+			System.out.print('\n');
+		}
+		System.out.println("Count is: " + count);
 	}
 }

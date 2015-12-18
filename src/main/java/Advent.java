@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +47,7 @@ public class Advent
 		//a.day14();
 		//a.day15();
 		a.day16();
+		a.day17();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1082,5 +1083,44 @@ public class Advent
 		}
 		br.close();
 		System.out.println("Sues: " + sues.size());
+	}
+	
+	int minContainers = 99999;
+	int minCount = 0;
+	private int findContainers(int amount, List<Integer> containers, int count)
+	{
+		// System.out.println("Amount is: " + amount + " size is: " + containers.size());
+		if (amount == 0) {
+			if (count < minContainers)
+			{
+				minContainers = count;
+				minCount = 1;
+			} else if (count == minContainers)
+			{
+				minCount++;
+			}
+			return 1;
+		}
+		if (amount < 0)
+		{
+			return 0;
+		}
+		if (containers.size() == 0)
+		{
+			return 0;
+		}
+		int total = 0;
+		for (int i = 0; i < containers.size(); i++)
+		{
+			total += findContainers(amount - containers.get(i), containers.subList(i + 1, containers.size()), count + 1);
+		}
+		return total;
+	}
+	
+	public void day17() throws Exception
+	{
+		List<Integer> containers = Arrays.asList(new Integer[]{11,30,47,31,32,36,3,1,5,3,32,36,15,11,46,26,28,1,19,3});
+		int total = findContainers(150, containers, 0);
+		System.out.println("Total is: " + total + " mincount is: " + minCount);
 	}
 }

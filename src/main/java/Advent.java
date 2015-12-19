@@ -46,9 +46,10 @@ public class Advent
 		// a.day13();
 		//a.day14();
 		//a.day15();
-		a.day16();
-		a.day17();
-		a.day18();
+		//a.day16();
+		//a.day17();
+		//a.day18();
+		a.day19();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1216,5 +1217,44 @@ public class Advent
 			System.out.print('\n');
 		}
 		System.out.println("Count is: " + count);
+	}
+	
+	public void day19() throws Exception
+	{
+		String molecule = "CRnCaCaCaSiRnBPTiMgArSiRnSiRnMgArSiRnCaFArTiTiBSiThFYCaFArCaCaSiThCaPBSiThSiThCaCaPTiRnPBSiThRnFArArCaCaSiThCaSiThSiRnMgArCaPTiBPRnFArSiThCaSiRnFArBCaSiRnCaPRnFArPMgYCaFArCaPTiTiTiBPBSiThCaPTiBPBSiRnFArBPBSiRnCaFArBPRnSiRnFArRnSiRnBFArCaFArCaCaCaSiThSiThCaCaPBPTiTiRnFArCaPTiBSiAlArPBCaCaCaCaCaSiRnMgArCaSiThFArThCaSiThCaSiRnCaFYCaSiRnFYFArFArCaSiRnFYFArCaSiRnBPMgArSiThPRnFArCaSiRnFArTiRnSiRnFYFArCaSiRnBFArCaSiRnTiMgArSiThCaSiThCaFArPRnFArSiRnFArTiTiTiTiBCaCaSiRnCaCaFYFArSiThCaPTiBPTiBCaSiThSiRnMgArCaF";
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day19.input"));
+		String line = null;
+		List<String> keys = new ArrayList<String>();
+		List<String> values = new ArrayList<String>();
+		Set<String> molecules = new HashSet<String>();
+		while ((line = br.readLine()) != null)
+		{
+			Pattern p = Pattern.compile("([A-Za-z]+) => ([A-Za-z]+)");
+			Matcher m = p.matcher(line);
+			m.find();
+			String key = m.group(1);
+			String value = m.group(2);
+			keys.add(key);
+			values.add(value);
+			for (int i = 0; i < molecule.length(); i++)
+			{
+				if (molecule.substring(i).startsWith(key))
+				{
+					String before = "";
+					String after = "";
+					if (i > 0)
+					{
+						before = molecule.substring(0,  i);
+					}
+					if (i + key.length() < molecule.length())
+					{
+						after = molecule.substring(i + key.length());
+					}
+					molecules.add(before + value + after);
+				}
+			}
+		}
+		br.close();
+		System.out.println("Molecules is: " + molecules.size());
 	}
 }

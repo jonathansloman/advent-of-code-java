@@ -3,8 +3,9 @@ apply plugin: 'eclipse'
 
 repositories {
 	mavenLocal()
-	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/groups/public' }
-	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/repositories/snapshots' }
+	mavenCentral()
+//	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/groups/public' }
+//	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/repositories/snapshots' }
 }
 
 sourceCompatibility = 1.7

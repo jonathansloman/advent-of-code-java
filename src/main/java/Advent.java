@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class Advent
 		// a.day19();
 		// a.day20();
 		a.day21();
+		a.day22();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1496,5 +1498,235 @@ public class Advent
 			}
 		}
 		System.out.println("min win is : " + mincostwin + " max lose is: " + maxcostlose);
+	}
+	
+	enum SpellType {
+		INSTANT_DAMAGE,
+		DAMAGE_HEAL,
+		ARMOUR,
+		DAMAGE,
+		MANA
+	}
+	class Spell implements Cloneable
+	{
+		String name;
+		int cost;
+		int amount;
+		int duration;
+		SpellType type;
+		public Spell(String name, SpellType type, int cost, int amount, int duration) {
+			this.name = name;
+			this.cost = cost;
+			this.amount = amount;
+			this.duration = duration;
+			this.type = type;
+		}
+		
+		protected Object clone() throws CloneNotSupportedException {
+			return super.clone();
+		}
+	}
+	
+	private int lowestwin = 99999;
+	
+	private void takeTurn(List<Spell> spells, List<Spell> effects, int player_mana, int player_hp, int boss_hp, int boss_damage, int spentmana, List<Spell> castList, String history) throws Exception
+	{
+		StringBuffer new_history = new StringBuffer(history);
+		/* if we've already spent more than current minimum, abandon this branch */
+		if (spentmana > lowestwin)
+		{
+//			System.out.println("Spent too much");
+			return;
+		}
+		/* take account of in play spells */
+		new_history.append("Player turn\n");
+		/* hard mode */
+		player_hp--;
+		if (player_hp <= 0)
+		{
+			return;
+		}
+		for (Iterator<Spell> iter = effects.iterator(); iter.hasNext();  )
+		{
+			Spell spell = iter.next();
+			switch (spell.type)
+			{
+			case ARMOUR:
+				//player_armour = spell.amount; // though actually armour here is irrelevant
+				break;
+			case DAMAGE:
+				boss_hp -= spell.amount;
+				new_history.append("Effect: " + spell.name + " boss at: " + boss_hp + "\n");
+				break;
+			case MANA:
+				new_history.append("Effect: " + spell.name + " player mana at: " + player_mana + "\n");
+				player_mana += spell.amount;
+				break;
+			default:
+				// something broken
+			}
+			spell.duration --;
+			if (spell.duration == 0)
+			{
+				iter.remove();
+			}
+		}
+		/* check for boss death */
+		if (boss_hp <= 0)
+		{
+			new_history.append("Boss dead");
+			if (spentmana < lowestwin)
+			{
+				lowestwin = spentmana;
+				System.out.println("new lowest win: " + lowestwin);
+				System.out.print("Cast list is: ");
+				for (Spell spell : castList)
+				{
+					System.out.print(spell.name + ", ");
+				}
+				System.out.println("");
+				System.out.println("History is : " + new_history.toString());
+			}
+			return;
+		}
+		/* chose a player spell to cast */
+		for (Spell spell: spells)
+		{
+			/* check if we can afford it */
+			if (spell.cost > player_mana)
+			{
+				continue;
+			}
+			/* check if it's an already in play effect */
+			boolean found = false;
+			for (Spell effect : effects)
+			{
+				if (effect.type == spell.type)
+				{
+					found = true;
+				}
+			}
+			if (found)
+			{
+				continue;
+			}
+			Spell castSpell = null;
+			int new_boss_hp = boss_hp;
+			int new_player_hp = player_hp;
+			int new_player_mana = player_mana;
+			int new_spentmana = spentmana;
+			int player_armour = 0;
+
+			StringBuffer newnew_history = new StringBuffer(new_history);
+			/* create a deep copy of the effects so we maintain state */
+			List<Spell> new_effects = new ArrayList<Spell>();
+			for (Spell effect : effects)
+			{
+				new_effects.add((Spell)effect.clone());
+			}
+			new_spentmana += spell.cost;
+			new_player_mana -= spell.cost;
+			newnew_history.append("Player casts: " + spell.name + " mana at: " + new_player_mana + "\n");
+
+			switch (spell.type)
+			{
+			case INSTANT_DAMAGE:
+				new_boss_hp -= spell.amount;
+				newnew_history.append("Boss hp at: " + new_boss_hp + "\n");
+				break;
+			case DAMAGE_HEAL:
+				new_boss_hp -= spell.amount;
+				new_player_hp += spell.amount;
+				newnew_history.append("Boss hp at: " + new_boss_hp + " player hp at: " + new_player_hp + "\n");
+				break;
+			default: // all others are effects, add a copy to effects.
+				castSpell = (Spell) spell.clone();
+				new_effects.add(castSpell);
+			}
+			/* do next turn */
+			List<Spell> newCastList = new ArrayList<Spell>(castList);
+			newCastList.add(spell);
+			newnew_history.append("Boss turn: \n");
+			/* now process boss turn - remember effects happen again */ 
+			for (Iterator<Spell> iter = new_effects.iterator(); iter.hasNext();  )
+			{
+				Spell effect = iter.next();
+				switch (effect.type)
+				{
+				case ARMOUR:
+					player_armour = effect.amount;
+					newnew_history.append("Effect: " + effect.name + " player has armour\n");
+					break;
+				case DAMAGE:
+					new_boss_hp -= effect.amount;
+					newnew_history.append("Effect: " + effect.name + " boss hp at: " + new_boss_hp + "\n");
+					break;
+				case MANA:
+					new_player_mana += effect.amount;
+					newnew_history.append("Effect: " + effect.name + " player mana at: " + new_player_mana + "\n");
+					break;
+				default:
+					// something broken
+				}
+				effect.duration --;
+				if (effect.duration == 0)
+				{
+					iter.remove();
+				}
+			}
+			/* check for boss death */
+			if (new_boss_hp <= 0)
+			{
+				if (new_spentmana < lowestwin)
+				{
+					lowestwin = new_spentmana;
+					System.out.println("new lowest win: " + lowestwin);
+					System.out.print("Cast list is: ");
+					for (Spell cspell : newCastList)
+					{
+						System.out.print(cspell.name + ", ");
+					}
+					System.out.println("");
+					System.out.println("History is: " + newnew_history.toString());
+				}
+				continue;
+			}	
+			/* do boss damage */
+			new_player_hp -= boss_damage - player_armour;
+			newnew_history.append("Boss does damage, player at: " + new_player_hp + "\n");
+			/* check for death */
+			if (new_player_hp <= 0)
+			{
+//				System.out.println("Player has died");
+				continue;
+			}
+
+			takeTurn(spells, new_effects, new_player_mana, new_player_hp, new_boss_hp, boss_damage, new_spentmana, newCastList, newnew_history.toString());
+		}
+//		System.out.println("All possible spells cast, backing up");
+		/* at this point we've either gone down branches or died as we couldn't cast a spell */
+		return;
+	}
+	
+	public void day22() throws Exception
+	{
+		int player_mana = 500;
+		int player_hp = 50;
+		int boss_hp = 55;
+//		int player_mana = 250;
+//		int player_hp = 10;
+//		int boss_hp = 14;
+		int boss_damage = 8;
+		List<Spell> spells = new ArrayList<Spell>();
+		List<Spell> effects = new ArrayList<Spell>();
+		spells.add(new Spell("Magic Missile", SpellType.INSTANT_DAMAGE, 53, 4, 0));
+		spells.add(new Spell("Drain", SpellType.DAMAGE_HEAL, 73, 2, 0));
+		spells.add(new Spell("Shield", SpellType.ARMOUR, 113, 7, 6));
+		spells.add(new Spell("Poison", SpellType.DAMAGE, 173, 3, 6));
+		spells.add(new Spell("Recharge", SpellType.MANA, 229, 101, 5));
+		
+		takeTurn(spells, effects, player_mana, player_hp, boss_hp, boss_damage, 0, new ArrayList<Spell>(), "");
+		System.out.println("Lowest win is: " + lowestwin);
+		
 	}
 }

@@ -20,16 +20,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class Advent
-{
+public class Advent {
 	static long startTime;
 
-	public Advent()
-	{
+	public Advent() {
 	}
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		System.out.println("dir is: " + System.getProperty("user.dir"));
 		System.out.println("Started: ");
 		Advent a = new Advent();
@@ -56,60 +53,50 @@ public class Advent
 		// a.day20();
 		// a.day21();
 		// a.day22();
-		a.day23();
+		//a.day23();
 		a.day24();
 		a.day25();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
-	public void day1() throws IOException
-	{
+	public void day1() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day1.input"));
 		String input = br.readLine();
 		br.close();
 		int floor = 0;
 		int basement = -1;
-		for (int i = 0; i < input.length(); i++)
-		{
-			if (input.charAt(i) == '(')
-			{
+		for (int i = 0; i < input.length(); i++) {
+			if (input.charAt(i) == '(') {
 				floor++;
-			} else if (input.charAt(i) == ')')
-			{
+			} else if (input.charAt(i) == ')') {
 				floor--;
 			}
-			if (basement == -1 && floor == -1)
-			{
+			if (basement == -1 && floor == -1) {
 				basement = i + 1;
 			}
 		}
 		System.out.println("floor is: " + floor + " basement reached at: " + basement);
 	}
 
-	public void day2() throws IOException
-	{
+	public void day2() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day2.input"));
 		String line = null;
 		int total = 0;
 		int ribbon = 0;
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			String[] parts = line.split("x");
 			int x = Integer.parseInt(parts[0]);
 			int y = Integer.parseInt(parts[1]);
 			int z = Integer.parseInt(parts[2]);
 			total += 2 * x * y + 2 * x * z + 2 * y * z;
 			ribbon += x * y * z;
-			if (x >= y && x >= z)
-			{
+			if (x >= y && x >= z) {
 				total += y * z;
 				ribbon += 2 * y + 2 * z;
-			} else if (y >= x && y >= z)
-			{
+			} else if (y >= x && y >= z) {
 				total += x * z;
 				ribbon += 2 * x + 2 * z;
-			} else
-			{
+			} else {
 				total += x * y;
 				ribbon += 2 * x + 2 * y;
 			}
@@ -118,8 +105,7 @@ public class Advent
 		System.out.println("total for day 2: " + total + " with ribbon: " + ribbon);
 	}
 
-	public void day3() throws IOException
-	{
+	public void day3() throws IOException {
 		Map<String, Integer> locations = new HashMap<String, Integer>();
 		Map<String, Integer> locations2 = new HashMap<String, Integer>();
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day3.input"));
@@ -133,106 +119,82 @@ public class Advent
 		boolean santaturn = true;
 		locations.put(x + "x" + y, 1);
 		locations2.put(santax + "x" + santay, 1);
-		while ((line = br.readLine()) != null)
-		{
-			for (int i = 0; i < line.length(); i++)
-			{
-				if (line.charAt(i) == '>')
-				{
+		while ((line = br.readLine()) != null) {
+			for (int i = 0; i < line.length(); i++) {
+				if (line.charAt(i) == '>') {
 					x++;
-					if (santaturn)
-					{
+					if (santaturn) {
 						santax++;
-					} else
-					{
+					} else {
 						robox++;
 					}
-				} else if (line.charAt(i) == '<')
-				{
+				} else if (line.charAt(i) == '<') {
 					x--;
-					if (santaturn)
-					{
+					if (santaturn) {
 						santax--;
-					} else
-					{
+					} else {
 						robox--;
 					}
-				} else if (line.charAt(i) == '^')
-				{
+				} else if (line.charAt(i) == '^') {
 					y++;
-					if (santaturn)
-					{
+					if (santaturn) {
 						santay++;
-					} else
-					{
+					} else {
 						roboy++;
 					}
-				} else if (line.charAt(i) == 'v')
-				{
+				} else if (line.charAt(i) == 'v') {
 					y--;
-					if (santaturn)
-					{
+					if (santaturn) {
 						santay--;
-					} else
-					{
+					} else {
 						roboy--;
 					}
 				} else
 					continue;
 				String loc = x + "x" + y;
-				if (locations.get(loc) == null)
-				{
+				if (locations.get(loc) == null) {
 					locations.put(loc, 1);
-				} else
-				{
+				} else {
 					int oldval = locations.get(loc);
 					locations.put(loc, oldval + 1);
 				}
 				String loc2;
-				if (santaturn)
-				{
+				if (santaturn) {
 					loc2 = santax + "x" + santay;
 					santaturn = false;
-				} else
-				{
+				} else {
 					loc2 = robox + "x" + roboy;
 					santaturn = true;
 				}
-				if (locations2.get(loc2) == null)
-				{
+				if (locations2.get(loc2) == null) {
 					locations2.put(loc2, 1);
-				} else
-				{
+				} else {
 					int oldval = locations2.get(loc2);
 					locations2.put(loc2, oldval + 1);
 				}
 			}
 		}
 		br.close();
-		System.out.println("Total houses is: " + locations.keySet().size() + " and for next year: "
-				+ locations2.keySet().size());
+		System.out.println(
+				"Total houses is: " + locations.keySet().size() + " and for next year: " + locations2.keySet().size());
 	}
 
-	public void day4() throws Exception
-	{
+	public void day4() throws Exception {
 		String keystart = "ckczppom";
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		int num = 0;
 		boolean found5 = false;
-		while (true)
-		{
+		while (true) {
 			String key = keystart + num;
 			md.reset();
 			byte[] md5 = md.digest(key.getBytes("UTF-8"));
 			BigInteger bi = new BigInteger(1, md5);
 			String hash = String.format("%0" + (md5.length << 1) + "X", bi);
-			if (!found5 && hash.startsWith("00000"))
-			{
+			if (!found5 && hash.startsWith("00000")) {
 				System.out.println("num for 00000 is: " + num);
 				found5 = true;
 			}
-			if (hash.startsWith("000000"))
-			{
+			if (hash.startsWith("000000")) {
 				System.out.println("num for 000000 is: " + num);
 				break;
 			}
@@ -240,14 +202,12 @@ public class Advent
 		}
 	}
 
-	public void day5() throws Exception
-	{
+	public void day5() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day5.input"));
 		String line = null;
 		int total = 0;
 		int total2 = 0;
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			int vowels = 0;
 			boolean doubleletter = false;
@@ -255,54 +215,42 @@ public class Advent
 
 			boolean repeatbetween = false;
 			boolean repeatpair = false;
-			for (int i = 0; i < line.length(); i++)
-			{
+			for (int i = 0; i < line.length(); i++) {
 				char c = line.charAt(i);
-				if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
-				{
+				if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
 					vowels++;
 				}
-				if (i > 0 && c == line.charAt(i - 1))
-				{
+				if (i > 0 && c == line.charAt(i - 1)) {
 					doubleletter = true;
 				}
-				if (i > 1 && c == line.charAt(i - 2))
-				{
+				if (i > 1 && c == line.charAt(i - 2)) {
 					repeatbetween = true;
 				}
-				if (i > 0)
-				{
+				if (i > 0) {
 					String pair = line.substring(i - 1, i + 1);
-					if (i > 2)
-					{
+					if (i > 2) {
 						String prepart = line.substring(0, i - 2);
-						if (prepart.indexOf(pair) != -1)
-						{
+						if (prepart.indexOf(pair) != -1) {
 							repeatpair = true;
 						}
 					}
-					if (i < line.length() - 2)
-					{
+					if (i < line.length() - 2) {
 						String postpart = line.substring(i + 1, line.length());
-						if (postpart.indexOf(pair) != -1)
-						{
+						if (postpart.indexOf(pair) != -1) {
 							repeatpair = true;
 						}
 					}
 				}
 			}
 			if (line.indexOf("ab") != -1 || line.indexOf("cd") != -1 || line.indexOf("xy") != -1
-					|| line.indexOf("pq") != -1)
-			{
+					|| line.indexOf("pq") != -1) {
 				badstring = true;
 			}
 
-			if (vowels >= 3 && doubleletter && !badstring)
-			{
+			if (vowels >= 3 && doubleletter && !badstring) {
 				total++;
 			}
-			if (repeatbetween && repeatpair)
-			{
+			if (repeatbetween && repeatpair) {
 				total2++;
 			}
 		}
@@ -311,31 +259,25 @@ public class Advent
 
 	}
 
-	public void day6() throws Exception
-	{
+	public void day6() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day6.input"));
 		String line = null;
 		boolean[][] grid = new boolean[1000][1000];
 		int[][] grid2 = new int[1000][1000];
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			int action = 0;
 			String rest;
-			if (line.startsWith("toggle"))
-			{
+			if (line.startsWith("toggle")) {
 				action = 1;
 				rest = line.substring(7);
-			} else if (line.startsWith("turn on"))
-			{
+			} else if (line.startsWith("turn on")) {
 				action = 2;
 				rest = line.substring(8);
-			} else if (line.startsWith("turn off"))
-			{
+			} else if (line.startsWith("turn off")) {
 				action = 3;
 				rest = line.substring(9);
-			} else
-			{
+			} else {
 				System.out.println("Bad line: " + line);
 				continue;
 			}
@@ -346,23 +288,17 @@ public class Advent
 			int y1 = Integer.parseInt(m.group(2));
 			int x2 = Integer.parseInt(m.group(3));
 			int y2 = Integer.parseInt(m.group(4));
-			for (int x = x1; x <= x2; x++)
-			{
-				for (int y = y1; y <= y2; y++)
-				{
-					if (action == 1)
-					{
+			for (int x = x1; x <= x2; x++) {
+				for (int y = y1; y <= y2; y++) {
+					if (action == 1) {
 						grid[x][y] = !grid[x][y];
 						grid2[x][y] += 2;
-					} else if (action == 2)
-					{
+					} else if (action == 2) {
 						grid[x][y] = true;
 						grid2[x][y]++;
-					} else if (action == 3)
-					{
+					} else if (action == 3) {
 						grid[x][y] = false;
-						if (grid2[x][y] > 0)
-						{
+						if (grid2[x][y] > 0) {
 							grid2[x][y]--;
 						}
 					}
@@ -372,12 +308,9 @@ public class Advent
 		}
 		int total = 0;
 		int total2 = 0;
-		for (int x = 0; x < 1000; x++)
-		{
-			for (int y = 0; y < 1000; y++)
-			{
-				if (grid[x][y])
-				{
+		for (int x = 0; x < 1000; x++) {
+			for (int y = 0; y < 1000; y++) {
+				if (grid[x][y]) {
 					total++;
 				}
 				total2 += grid2[x][y];
@@ -387,29 +320,24 @@ public class Advent
 		System.out.println("Total is: " + total + " and second: " + total2);
 	}
 
-	class Operation
-	{
+	class Operation {
 		int operation;
 		String input1;
 		String input2;
 		String output;
 	}
 
-	char findValue(Map<String, Operation> operations, String wire)
-	{
-		if (Character.isDigit(wire.charAt(0)))
-		{
+	char findValue(Map<String, Operation> operations, String wire) {
+		if (Character.isDigit(wire.charAt(0))) {
 			return (char) Integer.parseInt(wire);
 		}
 		Operation o = operations.get(wire);
-		if (o == null)
-		{
+		if (o == null) {
 			System.out.println("Missing operation for: " + wire);
 			return (char) 0;
 		}
 		char newval;
-		switch (o.operation)
-		{
+		switch (o.operation) {
 		case 1: // NOT
 			newval = (char) ~(findValue(operations, o.input1));
 			o.operation = 6;
@@ -443,28 +371,23 @@ public class Advent
 		}
 	}
 
-	public void day7() throws Exception
-	{
+	public void day7() throws Exception {
 		// change b in input to output for a for second part
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day7.input"));
 		String line = null;
 		Map<String, Operation> operations = new HashMap<String, Operation>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			Operation o = new Operation();
-			try
-			{
-				if (line.startsWith("NOT"))
-				{
+			try {
+				if (line.startsWith("NOT")) {
 					Pattern p = Pattern.compile("NOT ([a-z]+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
 					o.operation = 1;
 					o.input1 = m.group(1);
 					o.output = m.group(2);
-				} else if (line.indexOf("LSHIFT") != -1)
-				{
+				} else if (line.indexOf("LSHIFT") != -1) {
 					Pattern p = Pattern.compile("([a-z]+) LSHIFT (\\d+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
@@ -472,8 +395,7 @@ public class Advent
 					o.input1 = m.group(1);
 					o.input2 = m.group(2);
 					o.output = m.group(3);
-				} else if (line.indexOf("RSHIFT") != -1)
-				{
+				} else if (line.indexOf("RSHIFT") != -1) {
 					Pattern p = Pattern.compile("([a-z]+) RSHIFT (\\d+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
@@ -481,8 +403,7 @@ public class Advent
 					o.input1 = m.group(1);
 					o.input2 = m.group(2);
 					o.output = m.group(3);
-				} else if (line.indexOf("AND") != -1)
-				{
+				} else if (line.indexOf("AND") != -1) {
 					Pattern p = Pattern.compile("([a-z0-9]+) AND ([a-z]+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
@@ -490,8 +411,7 @@ public class Advent
 					o.input1 = m.group(1);
 					o.input2 = m.group(2);
 					o.output = m.group(3);
-				} else if (line.indexOf("OR") != -1)
-				{
+				} else if (line.indexOf("OR") != -1) {
 					Pattern p = Pattern.compile("([a-z]+) OR ([a-z]+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
@@ -499,21 +419,18 @@ public class Advent
 					o.input1 = m.group(1);
 					o.input2 = m.group(2);
 					o.output = m.group(3);
-				} else if (line.indexOf("->") != -1)
-				{
+				} else if (line.indexOf("->") != -1) {
 					Pattern p = Pattern.compile("([a-z0-9]+) -> ([a-z]+)");
 					Matcher m = p.matcher(line);
 					m.find();
 					o.operation = 6;
 					o.input1 = m.group(1);
 					o.output = m.group(2);
-				} else
-				{
+				} else {
 					System.out.println("Unknown line: " + line);
 				}
 				operations.put(o.output, o);
-			} catch (Exception e)
-			{
+			} catch (Exception e) {
 				System.out.println("Exception on line: " + line);
 			}
 		}
@@ -521,40 +438,31 @@ public class Advent
 		System.out.println("Value of a: " + (int) findValue(operations, "a"));
 	}
 
-	public void day8() throws Exception
-	{
+	public void day8() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day8.input"));
 		String line = null;
 		int literaltotal = 0;
 		int memorytotal = 0;
 		int encodedtotal = 0;
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			literaltotal += line.length();
 			int count = 0;
 			int count2 = 0;
-			for (int i = 0; i < line.length(); i++)
-			{
-				if (line.charAt(i) == '\\')
-				{
-					if (line.charAt(i + 1) == 'x')
-					{
+			for (int i = 0; i < line.length(); i++) {
+				if (line.charAt(i) == '\\') {
+					if (line.charAt(i + 1) == 'x') {
 						i += 3;
-					} else
-					{
+					} else {
 						i++;
 					}
 				}
 				count++;
 			}
-			for (int i = 0; i < line.length(); i++)
-			{
-				if (line.charAt(i) == '\\')
-				{
+			for (int i = 0; i < line.length(); i++) {
+				if (line.charAt(i) == '\\') {
 					count2++;
-				} else if (line.charAt(i) == '"')
-				{
+				} else if (line.charAt(i) == '"') {
 					count2++;
 				}
 				count2++;
@@ -566,58 +474,45 @@ public class Advent
 			// System.out.println(line + " " + line.length() + " " + count);
 		}
 		br.close();
-		System.out.println("Difference is: " + (literaltotal - memorytotal) + " and part 2: "
-				+ (encodedtotal - literaltotal));
+		System.out.println(
+				"Difference is: " + (literaltotal - memorytotal) + " and part 2: " + (encodedtotal - literaltotal));
 	}
 
-	private int findShortest(Set<String> places, Map<String, Integer> distances, String from,
-			int distance, int shortest, boolean findLongest)
-	{
-		if (places.size() == 0)
-		{
-			if (findLongest)
-			{
-				if (shortest < distance)
-				{
+	private int findShortest(Set<String> places, Map<String, Integer> distances, String from, int distance,
+			int shortest, boolean findLongest) {
+		if (places.size() == 0) {
+			if (findLongest) {
+				if (shortest < distance) {
 					return distance;
-				} else
-				{
+				} else {
 					return shortest;
 				}
-			} else
-			{
-				if (shortest == -1 || distance < shortest)
-				{
+			} else {
+				if (shortest == -1 || distance < shortest) {
 					return distance;
-				} else
-				{
+				} else {
 					return shortest;
 				}
 			}
 		}
-		for (String place : places)
-		{
+		for (String place : places) {
 			int newdistance = distance;
-			if (from != null)
-			{
+			if (from != null) {
 				newdistance = distance + distances.get(from + "-" + place);
 			}
 			Set<String> remainingPlaces = new HashSet<String>(places);
 			remainingPlaces.remove(place);
-			shortest = findShortest(remainingPlaces, distances, place, newdistance, shortest,
-					findLongest);
+			shortest = findShortest(remainingPlaces, distances, place, newdistance, shortest, findLongest);
 		}
 		return shortest;
 	}
 
-	public void day9() throws Exception
-	{
+	public void day9() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day9.input"));
 		String line = null;
 		Map<String, Integer> distances = new HashMap<String, Integer>();
 		Set<String> places = new HashSet<String>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			Pattern p = Pattern.compile("([A-Za-z]+) to ([A-Za-z]+) = (\\d+)");
 			Matcher m = p.matcher(line);
@@ -631,28 +526,22 @@ public class Advent
 			distances.put(place2 + "-" + place1, distance);
 		}
 		br.close();
-		System.out.println("Shortest is: " + findShortest(places, distances, null, 0, -1, false)
-				+ " longest is: " + findShortest(places, distances, null, 0, -1, true));
+		System.out.println("Shortest is: " + findShortest(places, distances, null, 0, -1, false) + " longest is: "
+				+ findShortest(places, distances, null, 0, -1, true));
 	}
 
-	public void day10()
-	{
+	public void day10() {
 		String input = "1321131112";
-		for (int i = 0; i < 50; i++)
-		{ // 40 for part 1. 50 for part 2
+		for (int i = 0; i < 50; i++) { // 40 for part 1. 50 for part 2
 			StringBuffer next = new StringBuffer();
 			int count = 0;
 			char lastdigit = 'z';
-			for (int j = 0; j < input.length(); j++)
-			{
+			for (int j = 0; j < input.length(); j++) {
 				char thisdigit = input.charAt(j);
-				if (thisdigit == lastdigit)
-				{
+				if (thisdigit == lastdigit) {
 					count++;
-				} else
-				{
-					if (lastdigit != 'z')
-					{
+				} else {
+					if (lastdigit != 'z') {
 						next.append(Integer.toString(count));
 						next.append(lastdigit);
 					}
@@ -668,103 +557,80 @@ public class Advent
 		System.out.println("Size is: " + input.length());
 	}
 
-	private char[] incrementChar(char[] list, int position)
-	{
+	private char[] incrementChar(char[] list, int position) {
 		char c = list[position];
-		if (c == 'z')
-		{
+		if (c == 'z') {
 			list = incrementChar(list, position - 1);
 			c = 'a';
-		} else
-		{
+		} else {
 			c = (char) ((int) c + 1);
 		}
-		if (c == 'i' || c == 'o' || c == 'l')
-		{
+		if (c == 'i' || c == 'o' || c == 'l') {
 			c = (char) ((int) c + 1);
 		}
 		list[position] = c;
 		return list;
 	}
 
-	public void day11()
-	{
+	public void day11() {
 		String input = "hepxxyzz";
 		int length = input.length();
 		char[] list = input.toCharArray();
 		boolean valid = false;
-		while (!valid)
-		{
+		while (!valid) {
 			list = incrementChar(list, length - 1);
 			// System.out.println("password is now: " + new String(list));
 			boolean hasstraight = false;
 			int pairs = 0;
 			int pos = 0;
 			boolean justhadpair = false;
-			while (pos < length - 1 && (!hasstraight || pairs < 2))
-			{
-				if (!justhadpair && list[pos] == list[pos + 1])
-				{
+			while (pos < length - 1 && (!hasstraight || pairs < 2)) {
+				if (!justhadpair && list[pos] == list[pos + 1]) {
 					pairs++;
 					justhadpair = true;
-				} else
-				{
+				} else {
 					justhadpair = false;
 				}
-				if (pos < length - 2 && list[pos] + 1 == list[pos + 1]
-						&& list[pos + 1] + 1 == list[pos + 2])
-				{
+				if (pos < length - 2 && list[pos] + 1 == list[pos + 1] && list[pos + 1] + 1 == list[pos + 2]) {
 					hasstraight = true;
 				}
 				pos++;
 			}
 			// System.out.println("pwd: " + new String(list) + " pairs: " +
 			// pairs + " str: " + hasstraight);
-			if (hasstraight && pairs >= 2)
-			{
+			if (hasstraight && pairs >= 2) {
 				valid = true;
 			}
 		}
 		System.out.println("Next password is: " + new String(list));
 	}
 
-	private int jsonCounter(JsonElement element)
-	{
+	private int jsonCounter(JsonElement element) {
 		int total = 0;
-		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber())
-		{
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
 			total += element.getAsJsonPrimitive().getAsInt();
-		} else if (element.isJsonArray())
-		{
-			for (JsonElement e : element.getAsJsonArray())
-			{
+		} else if (element.isJsonArray()) {
+			for (JsonElement e : element.getAsJsonArray()) {
 				total += jsonCounter(e);
 			}
-		} else if (element.isJsonObject())
-		{
+		} else if (element.isJsonObject()) {
 			JsonObject o = element.getAsJsonObject();
 			boolean hasRed = false;
-			for (Map.Entry<String, JsonElement> e : o.entrySet())
-			{
-				if (e.getValue().isJsonPrimitive()
-						&& e.getValue().getAsJsonPrimitive().getAsString().equals("red"))
-				{
+			for (Map.Entry<String, JsonElement> e : o.entrySet()) {
+				if (e.getValue().isJsonPrimitive() && e.getValue().getAsJsonPrimitive().getAsString().equals("red")) {
 					hasRed = true; // comment out for part 1
-				} else
-				{
+				} else {
 					total += jsonCounter(e.getValue());
 				}
 			}
-			if (hasRed)
-			{
+			if (hasRed) {
 				total = 0;
 			}
 		}
 		return total;
 	}
 
-	public void day12() throws Exception
-	{
+	public void day12() throws Exception {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(new FileReader("src/main/resources/day12.input"));
 		int total = jsonCounter(element);
@@ -772,50 +638,40 @@ public class Advent
 		System.out.println("Total is: " + total);
 	}
 
-	private int findBest(Set<String> names, Map<String, Integer> happy, String firstName,
-			String prevName)
-	{
-		if (names.size() == 1)
-		{
+	private int findBest(Set<String> names, Map<String, Integer> happy, String firstName, String prevName) {
+		if (names.size() == 1) {
 			String name = names.iterator().next();
 			return happy.get(name + "-" + prevName) + happy.get(name + "-" + firstName)
 					+ happy.get(prevName + "-" + name) + happy.get(firstName + "-" + name);
 		}
 		int best = -9999999;
-		for (String name : names)
-		{
+		for (String name : names) {
 			String nextFirst;
-			if (firstName == null)
-			{
+			if (firstName == null) {
 				nextFirst = name;
-			} else
-			{
+			} else {
 				nextFirst = firstName;
 			}
 			int h = 0;
-			if (prevName != null)
-			{
+			if (prevName != null) {
 				h = happy.get(name + "-" + prevName) + happy.get(prevName + "-" + name);
 			}
 			Set<String> remaining = new HashSet<String>(names);
 			remaining.remove(name);
 			h += findBest(remaining, happy, nextFirst, name);
-			if (h > best)
-			{
+			if (h > best) {
 				best = h;
 			}
 		}
 		return best;
 	}
 
-	public void day13() throws Exception
-	{
+	public void day13() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day13.input"));
 		String line = null;
 		Map<String, Integer> happy = new HashMap<String, Integer>();
 		Set<String> names = new HashSet<String>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
 			Pattern p = Pattern
 					.compile("([A-Za-z]+) would (gain|lose) (\\d+) happiness units by sitting next to ([A-Za-z]+).");
@@ -832,8 +688,7 @@ public class Advent
 		br.close();
 
 		System.out.println("best seating is: " + findBest(names, happy, null, null));
-		for (String name : names)
-		{
+		for (String name : names) {
 			happy.put("Me-" + name, 0);
 			happy.put(name + "-Me", 0);
 		}
@@ -841,8 +696,7 @@ public class Advent
 		System.out.println("best seating2 is: " + findBest(names, happy, null, null));
 	}
 
-	class Reindeer
-	{
+	class Reindeer {
 		String name;
 		int speed;
 		int flytime;
@@ -850,12 +704,10 @@ public class Advent
 		int points = 0;
 		int currentdistance = 0;
 
-		public int distanceAt(int time)
-		{
+		public int distanceAt(int time) {
 			int fullcycles = time / (flytime + resttime);
 			int remainder = time % (flytime + resttime);
-			if (remainder > flytime)
-			{
+			if (remainder > flytime) {
 				remainder = flytime;
 			}
 			currentdistance = (flytime * fullcycles + remainder) * speed;
@@ -863,18 +715,16 @@ public class Advent
 		}
 	}
 
-	public void day14() throws Exception
-	{
+	public void day14() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day14.input"));
 		String line = null;
 		int furthest = 0;
 		int totaltime = 2503;
 		List<Reindeer> reindeer = new ArrayList<Reindeer>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			Pattern p = Pattern
-					.compile("([A-Za-z]+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.");
+			Pattern p = Pattern.compile(
+					"([A-Za-z]+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.");
 			Matcher m = p.matcher(line);
 			m.find();
 			Reindeer r = new Reindeer();
@@ -883,44 +733,35 @@ public class Advent
 			r.flytime = Integer.parseInt(m.group(3));
 			r.resttime = Integer.parseInt(m.group(4));
 			reindeer.add(r);
-			if (r.distanceAt(totaltime) > furthest)
-			{
+			if (r.distanceAt(totaltime) > furthest) {
 				furthest = r.distanceAt(totaltime);
 			}
 		}
 		br.close();
-		for (int time = 1; time <= totaltime; time++)
-		{
+		for (int time = 1; time <= totaltime; time++) {
 			int leaddistance = 0;
-			for (Reindeer r : reindeer)
-			{
+			for (Reindeer r : reindeer) {
 				int dist = r.distanceAt(time);
-				if (dist > leaddistance)
-				{
+				if (dist > leaddistance) {
 					leaddistance = dist;
 				}
 			}
-			for (Reindeer r : reindeer)
-			{
-				if (r.currentdistance == leaddistance)
-				{
+			for (Reindeer r : reindeer) {
+				if (r.currentdistance == leaddistance) {
 					r.points++;
 				}
 			}
 		}
 		int maxpoints = 0;
-		for (Reindeer r : reindeer)
-		{
-			if (r.points > maxpoints)
-			{
+		for (Reindeer r : reindeer) {
+			if (r.points > maxpoints) {
 				maxpoints = r.points;
 			}
 		}
 		System.out.println("Furthest is: " + furthest + " max points is: " + maxpoints);
 	}
 
-	class Ingredient
-	{
+	class Ingredient {
 		String name;
 		int capacity;
 		int durability;
@@ -929,57 +770,47 @@ public class Advent
 		int calories;
 	}
 
-	int findBest(List<Ingredient> ingredients, int index, int amountleft, List<Integer> amounts)
-	{
+	int findBest(List<Ingredient> ingredients, int index, int amountleft, List<Integer> amounts) {
 		int best = 0;
-		if (index < ingredients.size() - 1)
-		{
-			for (int i = 0; i <= amountleft; i++)
-			{
+		if (index < ingredients.size() - 1) {
+			for (int i = 0; i <= amountleft; i++) {
 				amounts.add(index, i);
 				int innerbest = findBest(ingredients, index + 1, amountleft - i, amounts);
-				if (innerbest > best)
-				{
+				if (innerbest > best) {
 					best = innerbest;
 				}
 			}
 			return best;
-		} else
-		{
+		} else {
 			amounts.add(index, amountleft);
 			int cap = 0;
 			int dur = 0;
 			int fla = 0;
 			int tex = 0;
 			int cal = 0;
-			for (int i = 0; i < ingredients.size(); i++)
-			{
+			for (int i = 0; i < ingredients.size(); i++) {
 				cap += ingredients.get(i).capacity * amounts.get(i);
 				dur += ingredients.get(i).durability * amounts.get(i);
 				fla += ingredients.get(i).flavour * amounts.get(i);
 				tex += ingredients.get(i).texture * amounts.get(i);
 				cal += ingredients.get(i).calories * amounts.get(i);
 			}
-			if (cap <= 0 || dur <= 0 || fla <= 0 || tex <= 0 || cal != 500)
-			{
+			if (cap <= 0 || dur <= 0 || fla <= 0 || tex <= 0 || cal != 500) {
 				return 0;
-			} else
-			{
+			} else {
 				return cap * dur * fla * tex;
 			}
 		}
 	}
 
-	public void day15() throws Exception
-	{
+	public void day15() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day15.input"));
 		String line = null;
 		List<Ingredient> ingredients = new ArrayList<Ingredient>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			Pattern p = Pattern
-					.compile("([A-Za-z]+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)");
+			Pattern p = Pattern.compile(
+					"([A-Za-z]+): capacity (-?\\d+), durability (-?\\d+), flavor (-?\\d+), texture (-?\\d+), calories (-?\\d+)");
 			Matcher m = p.matcher(line);
 			m.find();
 			Ingredient ing = new Ingredient();
@@ -992,12 +823,10 @@ public class Advent
 			ingredients.add(ing);
 		}
 		br.close();
-		System.out.println("bestScore: "
-				+ findBest(ingredients, 0, 100, new ArrayList<Integer>(ingredients.size())));
+		System.out.println("bestScore: " + findBest(ingredients, 0, 100, new ArrayList<Integer>(ingredients.size())));
 	}
 
-	public class Sue
-	{
+	public class Sue {
 		int num;
 		int children = -1;
 		int cats = -1;
@@ -1010,8 +839,7 @@ public class Advent
 		int cars = -1;
 		int perfumes = -1;
 
-		boolean matches(Sue s)
-		{
+		boolean matches(Sue s) {
 			if (children != -1 && s.children != -1 && s.children != children)
 				return false;
 			if (cats != -1 && s.cats != -1 && s.cats != cats)
@@ -1035,8 +863,7 @@ public class Advent
 			return true;
 		}
 
-		boolean matches2(Sue s)
-		{
+		boolean matches2(Sue s) {
 			if (children != -1 && s.children != -1 && s.children != children)
 				return false;
 			if (cats != -1 && s.cats != -1 && s.cats <= cats)
@@ -1061,8 +888,7 @@ public class Advent
 		}
 	}
 
-	public void day16() throws Exception
-	{
+	public void day16() throws Exception {
 		Sue target = new Sue();
 		target.children = 3;
 		target.cats = 7;
@@ -1078,18 +904,16 @@ public class Advent
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day16.input"));
 		String line = null;
 		List<Sue> sues = new ArrayList<Sue>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			Pattern p = Pattern
-					.compile("Sue (\\d+):( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?");
+			Pattern p = Pattern.compile(
+					"Sue (\\d+):( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?( ([a-z]+): (\\d+),?)?");
 			Matcher m = p.matcher(line);
 			m.find();
 			Sue s = new Sue();
 			s.num = Integer.parseInt(m.group(1));
 			int counter = 2;
-			while (m.group(counter) != null)
-			{
+			while (m.group(counter) != null) {
 				String thing = m.group(counter + 1);
 				int amount = Integer.parseInt(m.group(counter + 2));
 				counter += 3;
@@ -1115,12 +939,10 @@ public class Advent
 					s.perfumes = amount;
 			}
 			sues.add(s);
-			if (target.matches(s))
-			{
+			if (target.matches(s)) {
 				System.out.println("Got match: " + s.num);
 			}
-			if (target.matches2(s))
-			{
+			if (target.matches2(s)) {
 				System.out.println("Got match2: " + s.num);
 			}
 		}
@@ -1131,58 +953,45 @@ public class Advent
 	int minContainers = 99999;
 	int minCount = 0;
 
-	private int findContainers(int amount, List<Integer> containers, int count)
-	{
+	private int findContainers(int amount, List<Integer> containers, int count) {
 		// System.out.println("Amount is: " + amount + " size is: " +
 		// containers.size());
-		if (amount == 0)
-		{
-			if (count < minContainers)
-			{
+		if (amount == 0) {
+			if (count < minContainers) {
 				minContainers = count;
 				minCount = 1;
-			} else if (count == minContainers)
-			{
+			} else if (count == minContainers) {
 				minCount++;
 			}
 			return 1;
 		}
-		if (amount < 0)
-		{
+		if (amount < 0) {
 			return 0;
 		}
-		if (containers.size() == 0)
-		{
+		if (containers.size() == 0) {
 			return 0;
 		}
 		int total = 0;
-		for (int i = 0; i < containers.size(); i++)
-		{
-			total += findContainers(amount - containers.get(i),
-					containers.subList(i + 1, containers.size()), count + 1);
+		for (int i = 0; i < containers.size(); i++) {
+			total += findContainers(amount - containers.get(i), containers.subList(i + 1, containers.size()),
+					count + 1);
 		}
 		return total;
 	}
 
-	public void day17() throws Exception
-	{
-		List<Integer> containers = Arrays.asList(new Integer[] { 11, 30, 47, 31, 32, 36, 3, 1, 5,
-				3, 32, 36, 15, 11, 46, 26, 28, 1, 19, 3 });
+	public void day17() throws Exception {
+		List<Integer> containers = Arrays
+				.asList(new Integer[] { 11, 30, 47, 31, 32, 36, 3, 1, 5, 3, 32, 36, 15, 11, 46, 26, 28, 1, 19, 3 });
 		int total = findContainers(150, containers, 0);
 		System.out.println("Total is: " + total + " mincount is: " + minCount);
 	}
 
-	int countNeighbours(boolean[][] grid, int x, int y)
-	{
+	int countNeighbours(boolean[][] grid, int x, int y) {
 		int count = 0;
-		for (int i = x - 1; i <= x + 1; i++)
-		{
-			for (int j = y - 1; j <= y + 1; j++)
-			{
-				if (i >= 0 && i < 100 && j >= 0 && j < 100 && (i != x || j != y))
-				{
-					if (grid[i][j])
-					{
+		for (int i = x - 1; i <= x + 1; i++) {
+			for (int j = y - 1; j <= y + 1; j++) {
+				if (i >= 0 && i < 100 && j >= 0 && j < 100 && (i != x || j != y)) {
+					if (grid[i][j]) {
 						count++;
 					}
 				}
@@ -1191,51 +1000,39 @@ public class Advent
 		return count;
 	}
 
-	private void doStep(boolean[][] source, boolean[][] dest)
-	{
-		for (int x = 0; x < source.length; x++)
-		{
-			for (int y = 0; y < source[x].length; y++)
-			{
+	private void doStep(boolean[][] source, boolean[][] dest) {
+		for (int x = 0; x < source.length; x++) {
+			for (int y = 0; y < source[x].length; y++) {
 				int neighbours = countNeighbours(source, x, y);
-				if (neighbours == 3)
-				{
+				if (neighbours == 3) {
 					dest[x][y] = true;
-				} else if (neighbours == 2 && source[x][y])
-				{
+				} else if (neighbours == 2 && source[x][y]) {
 					dest[x][y] = true;
-				} else
-				{
+				} else {
 					dest[x][y] = false;
 				}
 			}
 		}
 	}
 
-	private void cornerOn(boolean[][] grid)
-	{
+	private void cornerOn(boolean[][] grid) {
 		grid[0][0] = true;
 		grid[99][0] = true;
 		grid[99][99] = true;
 		grid[0][99] = true;
 	}
 
-	public void day18() throws Exception
-	{
+	public void day18() throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day18.input"));
 		String line = null;
 		boolean[][] state = new boolean[100][100];
 		boolean[][] state2 = new boolean[100][100];
 		int y = 0;
-		while ((line = br.readLine()) != null)
-		{
-			for (int x = 0; x < 100; x++)
-			{
-				if (line.charAt(x) == '#')
-				{
+		while ((line = br.readLine()) != null) {
+			for (int x = 0; x < 100; x++) {
+				if (line.charAt(x) == '#') {
 					state[y][x] = true;
-				} else
-				{
+				} else {
 					state[y][x] = false;
 				}
 			}
@@ -1243,24 +1040,19 @@ public class Advent
 		}
 		br.close();
 		cornerOn(state);
-		for (int steps = 0; steps < 100; steps += 2)
-		{
+		for (int steps = 0; steps < 100; steps += 2) {
 			doStep(state, state2);
 			cornerOn(state2);
 			doStep(state2, state);
 			cornerOn(state);
 		}
 		int count = 0;
-		for (y = 0; y < 100; y++)
-		{
-			for (int x = 0; x < 100; x++)
-			{
-				if (state[y][x])
-				{
+		for (y = 0; y < 100; y++) {
+			for (int x = 0; x < 100; x++) {
+				if (state[y][x]) {
 					count++;
 					System.out.print('#');
-				} else
-				{
+				} else {
 					System.out.print('.');
 				}
 			}
@@ -1269,40 +1061,31 @@ public class Advent
 		System.out.println("Count is: " + count);
 	}
 
-	public void day19() throws Exception
-	{
+	public void day19() throws Exception {
 		String molecule = "CRnCaCaCaSiRnBPTiMgArSiRnSiRnMgArSiRnCaFArTiTiBSiThFYCaFArCaCaSiThCaPBSiThSiThCaCaPTiRnPBSiThRnFArArCaCaSiThCaSiThSiRnMgArCaPTiBPRnFArSiThCaSiRnFArBCaSiRnCaPRnFArPMgYCaFArCaPTiTiTiBPBSiThCaPTiBPBSiRnFArBPBSiRnCaFArBPRnSiRnFArRnSiRnBFArCaFArCaCaCaSiThSiThCaCaPBPTiTiRnFArCaPTiBSiAlArPBCaCaCaCaCaSiRnMgArCaSiThFArThCaSiThCaSiRnCaFYCaSiRnFYFArFArCaSiRnFYFArCaSiRnBPMgArSiThPRnFArCaSiRnFArTiRnSiRnFYFArCaSiRnBFArCaSiRnTiMgArSiThCaSiThCaFArPRnFArSiRnFArTiTiTiTiBCaCaSiRnCaCaFYFArSiThCaPTiBPTiBCaSiThSiRnMgArCaF";
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day19.input"));
 		String line = null;
-		Map<String, String> replacements = new TreeMap<String, String>(new Comparator<String>()
-		{
-			public int compare(String o1, String o2)
-			{
-				return o1.length() < o2.length() ? 1000
-						: (o1.length() == o2.length() ? o1.compareTo(o2) : -1000);
+		Map<String, String> replacements = new TreeMap<String, String>(new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return o1.length() < o2.length() ? 1000 : (o1.length() == o2.length() ? o1.compareTo(o2) : -1000);
 			}
 		});
 		Set<String> molecules = new HashSet<String>();
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			Pattern p = Pattern.compile("([A-Za-z]+) => ([A-Za-z]+)");
 			Matcher m = p.matcher(line);
 			m.find();
 			String key = m.group(1);
 			String value = m.group(2);
 			replacements.put(value, key);
-			for (int i = 0; i < molecule.length(); i++)
-			{
-				if (molecule.substring(i).startsWith(key))
-				{
+			for (int i = 0; i < molecule.length(); i++) {
+				if (molecule.substring(i).startsWith(key)) {
 					String before = "";
 					String after = "";
-					if (i > 0)
-					{
+					if (i > 0) {
 						before = molecule.substring(0, i);
 					}
-					if (i + key.length() < molecule.length())
-					{
+					if (i + key.length() < molecule.length()) {
 						after = molecule.substring(i + key.length());
 					}
 					molecules.add(before + value + after);
@@ -1313,21 +1096,16 @@ public class Advent
 		for (String key : replacements.keySet())
 			System.out.println("Key " + key + "=" + replacements.get(key));
 		int steps = 0;
-		while (!molecule.equals("e"))
-		{
-			for (String rep : replacements.keySet())
-			{
+		while (!molecule.equals("e")) {
+			for (String rep : replacements.keySet()) {
 				int place = molecule.indexOf(rep);
-				if (place >= 0)
-				{
+				if (place >= 0) {
 					String before = "";
 					String after = "";
-					if (place > 0)
-					{
+					if (place > 0) {
 						before = molecule.substring(0, place);
 					}
-					if (place + rep.length() < molecule.length())
-					{
+					if (place + rep.length() < molecule.length()) {
 						after = molecule.substring(place + rep.length());
 					}
 					molecule = before + replacements.get(rep) + after;
@@ -1339,68 +1117,44 @@ public class Advent
 		System.out.println("Molecules is: " + molecules.size() + " replacements is: " + steps);
 	}
 
-	public void day20() throws Exception
-	{
+	public void day20() throws Exception {
 		int target = 29000000;
 		int sumfactors = target / 10;
 
 		int i = 650000;
 		// part 1 - should implement some form of binary search but just did it
 		// manually as lazy.
-		/*		while (true)
-				{
-					int factors = 0;
-					for (int j = 1; j <= i; j++)
-					{
-						if (i % j == 0)
-						{
-							factors += j;
-						}
-					}
-					if (factors >= sumfactors)
-					{
-						System.out.println("house is: " + i);
-						break;
-					} else
-					{
-						if (i % 1000 == 0)
-						{
-							System.out.println("numfactors is: " + factors + " for: " + i +  " diff: " + (sumfactors - factors));
-						}
-					}
-					i++;
-				} */
+		/*
+		 * while (true) { int factors = 0; for (int j = 1; j <= i; j++) { if (i
+		 * % j == 0) { factors += j; } } if (factors >= sumfactors) {
+		 * System.out.println("house is: " + i); break; } else { if (i % 1000 ==
+		 * 0) { System.out.println("numfactors is: " + factors + " for: " + i +
+		 * " diff: " + (sumfactors - factors)); } } i++; }
+		 */
 		i = 700000;
-		while (true)
-		{
+		while (true) {
 			int factors = 0;
-			for (int j = 1; j <= i; j++)
-			{
-				if (i % j == 0 && (i / j) <= 50)
-				{
+			for (int j = 1; j <= i; j++) {
+				if (i % j == 0 && (i / j) <= 50) {
 					factors += j;
 				}
 			}
-			if (factors * 11 >= target)
-			{
+			if (factors * 11 >= target) {
 				System.out.println("house is: " + i);
 				break;
-			} else
-			{
-				if (i % 1000 == 0)
-				{
-					System.out.println("numfactors is: " + factors + " for: " + i + " diff: "
-							+ (target - (factors * 11)));
+			} else {
+				if (i % 1000 == 0) {
+					System.out.println(
+							"numfactors is: " + factors + " for: " + i + " diff: " + (target - (factors * 11)));
 				}
 			}
 			i++;
 		}
 	}
 
-	public void day21() throws Exception
-	{
-		//int hp = 100;
-		//int boss_hp = 103;
+	public void day21() throws Exception {
+		// int hp = 100;
+		// int boss_hp = 103;
 		int boss_dmg = 9;
 		int boss_armr = 2;
 
@@ -1409,13 +1163,11 @@ public class Advent
 		String[] weaponnames = { "dagger", "shortsword", "warhammer", "longsword", "greataxe" };
 		int[] armourcosts = { 0, 13, 31, 53, 75, 102 };
 		int[] armourarmour = { 0, 1, 2, 3, 4, 5 };
-		String[] armournames = { "none", "leather", "chainmail", "splintmail", "bandedmail",
-				"platemail" };
+		String[] armournames = { "none", "leather", "chainmail", "splintmail", "bandedmail", "platemail" };
 		int[] ringscost = { 0, 25, 50, 100, 20, 40, 80 };
 		int[] ringsdamage = { 0, 1, 2, 3, 0, 0, 0 };
 		int[] ringsarmour = { 0, 0, 0, 0, 1, 2, 3 };
-		String[] ringnames = { "none", "damage1", "damage2", "damage3", "armour1", "armour2",
-				"armour3" };
+		String[] ringnames = { "none", "damage1", "damage2", "damage3", "armour1", "armour2", "armour3" };
 
 		int mincostwin = 999;
 		int maxcostlose = 0;
@@ -1425,28 +1177,23 @@ public class Advent
 		int boss_dmg_turn;
 		int player_dmg_turn;
 		// must have a single weapon
-		for (int weapon = 0; weapon < weaponcosts.length; weapon++)
-		{
+		for (int weapon = 0; weapon < weaponcosts.length; weapon++) {
 			cost = weaponcosts[weapon];
 			damagetotal = weapondamage[weapon];
 			armourtotal = 0;
 			// may or may not have armour
-			for (int armour = 0; armour < armourcosts.length; armour++)
-			{
+			for (int armour = 0; armour < armourcosts.length; armour++) {
 				armourtotal += armourarmour[armour];
 				cost += armourcosts[armour];
 				// otherwise assume no armour
 
-				for (int leftring = 0; leftring < ringscost.length; leftring++)
-				{
+				for (int leftring = 0; leftring < ringscost.length; leftring++) {
 
 					cost += ringscost[leftring];
 					armourtotal += ringsarmour[leftring];
 					damagetotal += ringsdamage[leftring];
-					for (int rightring = 0; rightring < ringscost.length; rightring++)
-					{
-						if (rightring == leftring && rightring > 0)
-						{
+					for (int rightring = 0; rightring < ringscost.length; rightring++) {
+						if (rightring == leftring && rightring > 0) {
 							continue; // can't have the same ring twice, unless
 										// ring is 0 (no ring)
 						}
@@ -1466,21 +1213,17 @@ public class Advent
 						if (player_dmg_turn < 1)
 							player_dmg_turn = 1;
 						if (player_dmg_turn > boss_dmg_turn
-								|| (player_dmg_turn >= 7 && player_dmg_turn == boss_dmg_turn))
-						{
-							if (cost < mincostwin)
-							{
+								|| (player_dmg_turn >= 7 && player_dmg_turn == boss_dmg_turn)) {
+							if (cost < mincostwin) {
 								mincostwin = cost;
-								System.out.println("win weapon is: " + weaponnames[weapon]
-										+ " armour is: " + armournames[armour] + " left ring: "
-										+ ringnames[leftring] + " right ring: " + ringnames[rightring]);
+								System.out.println("win weapon is: " + weaponnames[weapon] + " armour is: "
+										+ armournames[armour] + " left ring: " + ringnames[leftring] + " right ring: "
+										+ ringnames[rightring]);
 							}
 						}
 						if (boss_dmg_turn > player_dmg_turn
-								|| (boss_dmg_turn < 7 && boss_dmg_turn == player_dmg_turn))
-						{
-							if (cost > maxcostlose)
-							{
+								|| (boss_dmg_turn < 7 && boss_dmg_turn == player_dmg_turn)) {
+							if (cost > maxcostlose) {
 								maxcostlose = cost;
 								System.out.println("lose weapon is: " + weaponnames[weapon] + " armour is: "
 										+ armournames[armour] + " left ring: " + ringnames[leftring] + " right ring: "
@@ -1502,21 +1245,18 @@ public class Advent
 		}
 		System.out.println("min win is : " + mincostwin + " max lose is: " + maxcostlose);
 	}
-	
+
 	enum SpellType {
-		INSTANT_DAMAGE,
-		DAMAGE_HEAL,
-		ARMOUR,
-		DAMAGE,
-		MANA
+		INSTANT_DAMAGE, DAMAGE_HEAL, ARMOUR, DAMAGE, MANA
 	}
-	class Spell implements Cloneable
-	{
+
+	class Spell implements Cloneable {
 		String name;
 		int cost;
 		int amount;
 		int duration;
 		SpellType type;
+
 		public Spell(String name, SpellType type, int cost, int amount, int duration) {
 			this.name = name;
 			this.cost = cost;
@@ -1524,38 +1264,37 @@ public class Advent
 			this.duration = duration;
 			this.type = type;
 		}
-		
+
 		protected Object clone() throws CloneNotSupportedException {
 			return super.clone();
 		}
 	}
-	
+
 	private int lowestwin = 99999;
-	
-	private void takeTurn(List<Spell> spells, List<Spell> effects, int player_mana, int player_hp, int boss_hp, int boss_damage, int spentmana, List<Spell> castList, String history) throws Exception
-	{
+
+	private void takeTurn(List<Spell> spells, List<Spell> effects, int player_mana, int player_hp, int boss_hp,
+			int boss_damage, int spentmana, List<Spell> castList, String history) throws Exception {
 		StringBuffer new_history = new StringBuffer(history);
-		/* if we've already spent more than current minimum, abandon this branch */
-		if (spentmana > lowestwin)
-		{
-//			System.out.println("Spent too much");
+		/*
+		 * if we've already spent more than current minimum, abandon this branch
+		 */
+		if (spentmana > lowestwin) {
+			// System.out.println("Spent too much");
 			return;
 		}
 		/* take account of in play spells */
 		new_history.append("Player turn\n");
 		/* hard mode */
 		player_hp--;
-		if (player_hp <= 0)
-		{
+		if (player_hp <= 0) {
 			return;
 		}
-		for (Iterator<Spell> iter = effects.iterator(); iter.hasNext();  )
-		{
+		for (Iterator<Spell> iter = effects.iterator(); iter.hasNext();) {
 			Spell spell = iter.next();
-			switch (spell.type)
-			{
+			switch (spell.type) {
 			case ARMOUR:
-				//player_armour = spell.amount; // though actually armour here is irrelevant
+				// player_armour = spell.amount; // though actually armour here
+				// is irrelevant
 				break;
 			case DAMAGE:
 				boss_hp -= spell.amount;
@@ -1568,23 +1307,19 @@ public class Advent
 			default:
 				// something broken
 			}
-			spell.duration --;
-			if (spell.duration == 0)
-			{
+			spell.duration--;
+			if (spell.duration == 0) {
 				iter.remove();
 			}
 		}
 		/* check for boss death */
-		if (boss_hp <= 0)
-		{
+		if (boss_hp <= 0) {
 			new_history.append("Boss dead");
-			if (spentmana < lowestwin)
-			{
+			if (spentmana < lowestwin) {
 				lowestwin = spentmana;
 				System.out.println("new lowest win: " + lowestwin);
 				System.out.print("Cast list is: ");
-				for (Spell spell : castList)
-				{
+				for (Spell spell : castList) {
 					System.out.print(spell.name + ", ");
 				}
 				System.out.println("");
@@ -1593,24 +1328,19 @@ public class Advent
 			return;
 		}
 		/* chose a player spell to cast */
-		for (Spell spell: spells)
-		{
+		for (Spell spell : spells) {
 			/* check if we can afford it */
-			if (spell.cost > player_mana)
-			{
+			if (spell.cost > player_mana) {
 				continue;
 			}
 			/* check if it's an already in play effect */
 			boolean found = false;
-			for (Spell effect : effects)
-			{
-				if (effect.type == spell.type)
-				{
+			for (Spell effect : effects) {
+				if (effect.type == spell.type) {
 					found = true;
 				}
 			}
-			if (found)
-			{
+			if (found) {
 				continue;
 			}
 			Spell castSpell = null;
@@ -1623,16 +1353,14 @@ public class Advent
 			StringBuffer newnew_history = new StringBuffer(new_history);
 			/* create a deep copy of the effects so we maintain state */
 			List<Spell> new_effects = new ArrayList<Spell>();
-			for (Spell effect : effects)
-			{
-				new_effects.add((Spell)effect.clone());
+			for (Spell effect : effects) {
+				new_effects.add((Spell) effect.clone());
 			}
 			new_spentmana += spell.cost;
 			new_player_mana -= spell.cost;
 			newnew_history.append("Player casts: " + spell.name + " mana at: " + new_player_mana + "\n");
 
-			switch (spell.type)
-			{
+			switch (spell.type) {
 			case INSTANT_DAMAGE:
 				new_boss_hp -= spell.amount;
 				newnew_history.append("Boss hp at: " + new_boss_hp + "\n");
@@ -1650,12 +1378,10 @@ public class Advent
 			List<Spell> newCastList = new ArrayList<Spell>(castList);
 			newCastList.add(spell);
 			newnew_history.append("Boss turn: \n");
-			/* now process boss turn - remember effects happen again */ 
-			for (Iterator<Spell> iter = new_effects.iterator(); iter.hasNext();  )
-			{
+			/* now process boss turn - remember effects happen again */
+			for (Iterator<Spell> iter = new_effects.iterator(); iter.hasNext();) {
 				Spell effect = iter.next();
-				switch (effect.type)
-				{
+				switch (effect.type) {
 				case ARMOUR:
 					player_armour = effect.amount;
 					newnew_history.append("Effect: " + effect.name + " player has armour\n");
@@ -1671,54 +1397,52 @@ public class Advent
 				default:
 					// something broken
 				}
-				effect.duration --;
-				if (effect.duration == 0)
-				{
+				effect.duration--;
+				if (effect.duration == 0) {
 					iter.remove();
 				}
 			}
 			/* check for boss death */
-			if (new_boss_hp <= 0)
-			{
-				if (new_spentmana < lowestwin)
-				{
+			if (new_boss_hp <= 0) {
+				if (new_spentmana < lowestwin) {
 					lowestwin = new_spentmana;
 					System.out.println("new lowest win: " + lowestwin);
 					System.out.print("Cast list is: ");
-					for (Spell cspell : newCastList)
-					{
+					for (Spell cspell : newCastList) {
 						System.out.print(cspell.name + ", ");
 					}
 					System.out.println("");
 					System.out.println("History is: " + newnew_history.toString());
 				}
 				continue;
-			}	
+			}
 			/* do boss damage */
 			new_player_hp -= boss_damage - player_armour;
 			newnew_history.append("Boss does damage, player at: " + new_player_hp + "\n");
 			/* check for death */
-			if (new_player_hp <= 0)
-			{
-//				System.out.println("Player has died");
+			if (new_player_hp <= 0) {
+				// System.out.println("Player has died");
 				continue;
 			}
 
-			takeTurn(spells, new_effects, new_player_mana, new_player_hp, new_boss_hp, boss_damage, new_spentmana, newCastList, newnew_history.toString());
+			takeTurn(spells, new_effects, new_player_mana, new_player_hp, new_boss_hp, boss_damage, new_spentmana,
+					newCastList, newnew_history.toString());
 		}
-//		System.out.println("All possible spells cast, backing up");
-		/* at this point we've either gone down branches or died as we couldn't cast a spell */
+		// System.out.println("All possible spells cast, backing up");
+		/*
+		 * at this point we've either gone down branches or died as we couldn't
+		 * cast a spell
+		 */
 		return;
 	}
-	
-	public void day22() throws Exception
-	{
+
+	public void day22() throws Exception {
 		int player_mana = 500;
 		int player_hp = 50;
 		int boss_hp = 55;
-//		int player_mana = 250;
-//		int player_hp = 10;
-//		int boss_hp = 14;
+		// int player_mana = 250;
+		// int player_hp = 10;
+		// int boss_hp = 14;
 		int boss_damage = 8;
 		List<Spell> spells = new ArrayList<Spell>();
 		List<Spell> effects = new ArrayList<Spell>();
@@ -1727,96 +1451,126 @@ public class Advent
 		spells.add(new Spell("Shield", SpellType.ARMOUR, 113, 7, 6));
 		spells.add(new Spell("Poison", SpellType.DAMAGE, 173, 3, 6));
 		spells.add(new Spell("Recharge", SpellType.MANA, 229, 101, 5));
-		
+
 		takeTurn(spells, effects, player_mana, player_hp, boss_hp, boss_damage, 0, new ArrayList<Spell>(), "");
 		System.out.println("Lowest win is: " + lowestwin);
-		
+
 	}
-	private class Var
-	{
+
+	private class Var {
 		int value = 0;
 	}
-	
-	public void day23() throws Exception
-	{
-		Map<Character, Var>vars = new HashMap<Character, Var>();
+
+	public void day23() throws Exception {
+		Map<Character, Var> vars = new HashMap<Character, Var>();
 		Var va = new Var();
-		va.value = 1;
+		va.value = 1; // 0 for part 1
 		vars.put('a', va);
 		vars.put('b', new Var());
-		
+
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day23.input"));
 		String line = null;
 		List<String> instructions = new ArrayList<String>();
 
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			instructions.add(line);
 		}
 		br.close();
-		for (int place = 0; place < instructions.size();)
-		{
+		for (int place = 0; place < instructions.size();) {
 			String inst = instructions.get(place);
-			System.out.println("place is: " + place + " inst is: " + inst + " a is: " + vars.get('a').value + " b is: " + vars.get('b').value);
+			System.out.println("place is: " + place + " inst is: " + inst + " a is: " + vars.get('a').value + " b is: "
+					+ vars.get('b').value);
 
-			if (inst.startsWith("hlf"))
-			{
+			if (inst.startsWith("hlf")) {
 				char var = inst.charAt(4);
 				Var v = vars.get(var);
 				v.value = v.value / 2;
 				place++;
-			} else if (inst.startsWith("tpl"))
-			{
+			} else if (inst.startsWith("tpl")) {
 				char var = inst.charAt(4);
 				Var v = vars.get(var);
 				v.value = v.value * 3;
 				place++;
-			} else if (inst.startsWith("inc"))
-			{
+			} else if (inst.startsWith("inc")) {
 				char var = inst.charAt(4);
 				Var v = vars.get(var);
 				v.value = v.value + 1;
 				place++;
-			} else if (inst.startsWith("jmp"))
-			{
+			} else if (inst.startsWith("jmp")) {
 				int amount = Integer.parseInt(inst.substring(4));
 				place += amount;
-			} else if (inst.startsWith("jie"))
-			{
+			} else if (inst.startsWith("jie")) {
 				char var = inst.charAt(4);
-				Var v = vars.get(var);	
-				if (v.value % 2 == 0)
-				{
+				Var v = vars.get(var);
+				if (v.value % 2 == 0) {
 					int amount = Integer.parseInt(inst.substring(7));
 					place += amount;
-				} else
-				{
+				} else {
 					place++;
 				}
-			} else if (inst.startsWith("jio"))
-			{
+			} else if (inst.startsWith("jio")) {
 				char var = inst.charAt(4);
-				Var v = vars.get(var);	
-				if (v.value == 1)
-				{
+				Var v = vars.get(var);
+				if (v.value == 1) {
 					int amount = Integer.parseInt(inst.substring(7));
 					place += amount;
-				} else
-				{
+				} else {
 					place++;
-				}			
+				}
 			}
 		}
 		System.out.println("b is: " + vars.get('b').value);
 	}
+
+	long lowestquantum = 9999999;
+	int fewest = 99;
+	int[] packages = new int[] { 1, 3, 5, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+			97, 101, 103, 107, 109, 113 };
 	
-	public void day24() throws Exception
-	{
-		
+//	int[] packages = new int[] { 1,2,3,4,5,7,8,9,10,11};
+
+	private void findfewest(int index, int total, List<Integer> selected, int target) {
+		if (total > target || index > packages.length) {
+			return;
+		}
+		if (total == target) {
+			long quantum = 1;
+			for (int x : selected) {
+				quantum = quantum * x;
+			}
+			if (selected.size() < fewest || (selected.size() == fewest && quantum < lowestquantum)) {
+				fewest = selected.size();
+				lowestquantum = quantum;
+
+				System.out.println("New lowest items: " + fewest + " with quantum: " + lowestquantum + " array is: "
+						+ Arrays.toString(selected.toArray()));
+			}
+			return;
+		}
+		// System.out.println("index is: " + index + " total is: " + total + " selected is: " + Arrays.toString(selected.toArray()));
+		for (int i = index; i < packages.length; i++) {
+			int newtotal = total + packages[i];
+			List<Integer> newselected = new ArrayList<Integer>(selected);
+			newselected.add(packages[i]);
+			findfewest(i + 1, newtotal, newselected, target);
+		}
 	}
-	
-	public void day25() throws Exception
-	{
-		
+
+	public void day24() throws Exception {
+		int total = 0;
+		for (int i : packages) {
+			System.out.println("i is: " + i);
+			total += i;
+		}
+		int target = total / 4; // 3 for part 1
+		System.out.println("Total is: " + total + " target is: " + target);
+
+		List<Integer> selected = new ArrayList<Integer>();
+		findfewest(0, 0, selected, target);
+		System.out.println("lowest quantum is: " + lowestquantum + " for this number items: " + fewest);
+	}
+
+	public void day25() throws Exception {
+
 	}
 }

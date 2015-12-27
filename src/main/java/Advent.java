@@ -54,8 +54,11 @@ public class Advent
 		// a.day18();
 		// a.day19();
 		// a.day20();
-		a.day21();
-		a.day22();
+		// a.day21();
+		// a.day22();
+		a.day23();
+		a.day24();
+		a.day25();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1727,6 +1730,93 @@ public class Advent
 		
 		takeTurn(spells, effects, player_mana, player_hp, boss_hp, boss_damage, 0, new ArrayList<Spell>(), "");
 		System.out.println("Lowest win is: " + lowestwin);
+		
+	}
+	private class Var
+	{
+		int value = 0;
+	}
+	
+	public void day23() throws Exception
+	{
+		Map<Character, Var>vars = new HashMap<Character, Var>();
+		Var va = new Var();
+		va.value = 1;
+		vars.put('a', va);
+		vars.put('b', new Var());
+		
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/day23.input"));
+		String line = null;
+		List<String> instructions = new ArrayList<String>();
+
+		while ((line = br.readLine()) != null)
+		{
+			instructions.add(line);
+		}
+		br.close();
+		for (int place = 0; place < instructions.size();)
+		{
+			String inst = instructions.get(place);
+			System.out.println("place is: " + place + " inst is: " + inst + " a is: " + vars.get('a').value + " b is: " + vars.get('b').value);
+
+			if (inst.startsWith("hlf"))
+			{
+				char var = inst.charAt(4);
+				Var v = vars.get(var);
+				v.value = v.value / 2;
+				place++;
+			} else if (inst.startsWith("tpl"))
+			{
+				char var = inst.charAt(4);
+				Var v = vars.get(var);
+				v.value = v.value * 3;
+				place++;
+			} else if (inst.startsWith("inc"))
+			{
+				char var = inst.charAt(4);
+				Var v = vars.get(var);
+				v.value = v.value + 1;
+				place++;
+			} else if (inst.startsWith("jmp"))
+			{
+				int amount = Integer.parseInt(inst.substring(4));
+				place += amount;
+			} else if (inst.startsWith("jie"))
+			{
+				char var = inst.charAt(4);
+				Var v = vars.get(var);	
+				if (v.value % 2 == 0)
+				{
+					int amount = Integer.parseInt(inst.substring(7));
+					place += amount;
+				} else
+				{
+					place++;
+				}
+			} else if (inst.startsWith("jio"))
+			{
+				char var = inst.charAt(4);
+				Var v = vars.get(var);	
+				if (v.value == 1)
+				{
+					int amount = Integer.parseInt(inst.substring(7));
+					place += amount;
+				} else
+				{
+					place++;
+				}			
+			}
+		}
+		System.out.println("b is: " + vars.get('b').value);
+	}
+	
+	public void day24() throws Exception
+	{
+		
+	}
+	
+	public void day25() throws Exception
+	{
 		
 	}
 }

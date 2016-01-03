@@ -53,9 +53,9 @@ public class Advent {
 		// a.day20();
 		// a.day21();
 		// a.day22();
-		//a.day23();
-		a.day24();
-		a.day25();
+		// a.day23();
+		 a.day24();
+		// a.day25();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1285,10 +1285,10 @@ public class Advent {
 		/* take account of in play spells */
 		new_history.append("Player turn\n");
 		/* hard mode */
-		player_hp--;
+		/*player_hp--;
 		if (player_hp <= 0) {
 			return;
-		}
+		}*/
 		for (Iterator<Spell> iter = effects.iterator(); iter.hasNext();) {
 			Spell spell = iter.next();
 			switch (spell.type) {
@@ -1317,13 +1317,13 @@ public class Advent {
 			new_history.append("Boss dead");
 			if (spentmana < lowestwin) {
 				lowestwin = spentmana;
-				System.out.println("new lowest win: " + lowestwin);
-				System.out.print("Cast list is: ");
+				//System.out.println("new lowest win: " + lowestwin);
+				//System.out.print("Cast list is: ");
 				for (Spell spell : castList) {
-					System.out.print(spell.name + ", ");
+					//System.out.print(spell.name + ", ");
 				}
-				System.out.println("");
-				System.out.println("History is : " + new_history.toString());
+				//System.out.println("");
+				//System.out.println("History is : " + new_history.toString());
 			}
 			return;
 		}
@@ -1406,13 +1406,13 @@ public class Advent {
 			if (new_boss_hp <= 0) {
 				if (new_spentmana < lowestwin) {
 					lowestwin = new_spentmana;
-					System.out.println("new lowest win: " + lowestwin);
-					System.out.print("Cast list is: ");
+					//System.out.println("new lowest win: " + lowestwin);
+					//System.out.print("Cast list is: ");
 					for (Spell cspell : newCastList) {
-						System.out.print(cspell.name + ", ");
+						// System.out.print(cspell.name + ", ");
 					}
-					System.out.println("");
-					System.out.println("History is: " + newnew_history.toString());
+					//System.out.println("");
+					//System.out.println("History is: " + newnew_history.toString());
 				}
 				continue;
 			}
@@ -1439,11 +1439,11 @@ public class Advent {
 	public void day22() throws Exception {
 		int player_mana = 500;
 		int player_hp = 50;
-		int boss_hp = 55;
+		int boss_hp = 51;
 		// int player_mana = 250;
 		// int player_hp = 10;
 		// int boss_hp = 14;
-		int boss_damage = 8;
+		int boss_damage = 9;
 		List<Spell> spells = new ArrayList<Spell>();
 		List<Spell> effects = new ArrayList<Spell>();
 		spells.add(new Spell("Magic Missile", SpellType.INSTANT_DAMAGE, 53, 4, 0));
@@ -1562,15 +1562,38 @@ public class Advent {
 			System.out.println("i is: " + i);
 			total += i;
 		}
-		int target = total / 4; // 3 for part 1
+		int target = total / 3; // 3 for part 1, 4 for part 2
 		System.out.println("Total is: " + total + " target is: " + target);
 
 		List<Integer> selected = new ArrayList<Integer>();
 		findfewest(0, 0, selected, target);
+		// we assume you can divide the remaining items equally - should properly check.
 		System.out.println("lowest quantum is: " + lowestquantum + " for this number items: " + fewest);
 	}
 
 	public void day25() throws Exception {
-
+		// int column = 3029;
+		// int row = 2947;
+		int column = 2;
+		int row = 2;
+		double index = 0;
+		for (int c = 1; c <= column; c++)
+		{
+			index += c;
+		}
+		for (int r = 2; r <= row; r++)
+		{
+			index += (r - 2) + column;
+		}
+		System.out.println("index is: " + index);
+		
+		double startcode = 20151125;
+		int multiple = 252533;
+		int divide = 33554393;
+		for (double d= 0; d < index; d++)
+		{
+			startcode = (startcode * multiple) % divide;
+		}
+		System.out.println("code is: " + startcode + " for index: " + index);
 	}
 }

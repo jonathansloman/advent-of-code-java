@@ -54,8 +54,8 @@ public class Advent {
 		// a.day21();
 		// a.day22();
 		// a.day23();
-		 a.day24();
-		// a.day25();
+		// a.day24();
+		 a.day25();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 
@@ -1572,10 +1572,10 @@ public class Advent {
 	}
 
 	public void day25() throws Exception {
-		// int column = 3029;
-		// int row = 2947;
-		int column = 2;
-		int row = 2;
+		int column = 3029;
+		int row = 2947;
+		//int column = 4;
+		//int row = 4;
 		double index = 0;
 		for (int c = 1; c <= column; c++)
 		{
@@ -1590,7 +1590,7 @@ public class Advent {
 		double startcode = 20151125;
 		int multiple = 252533;
 		int divide = 33554393;
-		for (double d= 0; d < index; d++)
+		for (double d= 1; d < index; d++)
 		{
 			startcode = (startcode * multiple) % divide;
 		}

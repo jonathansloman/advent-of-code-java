@@ -11,6 +11,61 @@ public class TwentySixteen {
 	{
 	}
 	
+	void day4() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day4.input"));
+		String line = null;
+		int sum = 0;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			Pattern p = Pattern.compile("([a-z-]+)-(\\d+)\\[([a-z]+)\\]");
+			Matcher m = p.matcher(line);
+			m.find();
+			String name = m.group(1);
+			int code = Integer.parseInt(m.group(2));
+			String checksum = m.group(3);
+			
+			int counts[] = new int[26];
+			int max = 0;
+			for (int i = 0; i < name.length(); i++)
+			{
+				char c = name.charAt(i);
+				if (c != '-')
+				{
+					counts[c - 'a']++;
+					if (counts[c - 'a'] > max)
+					{
+						max = counts[c - 'a'];
+					}
+				}
+			}
+			String check = "";
+			int checkFound = 0;
+			while (checkFound < 5)
+			{
+				for (int maxcount = max; checkFound < 5; maxcount--)
+				{
+					for (int j = 0; j < 26; j++)
+					{
+						if (counts[j] == maxcount)
+						{
+							check = check + Character.toString((char)('a' + j));
+							checkFound++;
+							if (checkFound == 5)
+								break;
+						}
+					}
+				}
+			}
+			
+			if (check.equals(checksum)) {
+				sum += code;
+			}		
+		}
+		System.out.println("Sum is: " + sum );
+		br.close();
+	}
+	
 	void day3() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day3.input"));

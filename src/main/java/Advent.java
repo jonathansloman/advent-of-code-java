@@ -31,6 +31,8 @@ public class Advent {
 		System.out.println("Started: ");
 		Advent a = new Advent();
 		startTime = System.currentTimeMillis();
+		TwentySixteen b = new TwentySixteen();
+		b.day1();
 		// a.day1();
 		// a.day2();
 		// a.day3();
@@ -55,7 +57,7 @@ public class Advent {
 		// a.day22();
 		// a.day23();
 		// a.day24();
-		 a.day25();
+		// a.day25();
 		System.out.println("Completed in: " + (System.currentTimeMillis() - startTime));
 	}
 

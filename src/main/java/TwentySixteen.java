@@ -16,7 +16,99 @@ public class TwentySixteen {
 	
 	public void run() throws Exception
 	{
-		day7();
+		day8();
+	}
+	
+	private void printGrid(boolean[][] grid)
+	{
+		StringBuffer sb = new StringBuffer();
+		for (int y = 0; y < 6; y++)
+		{
+			for (int x = 0; x < 50; x++)
+			{
+				if (grid[y][x])
+				{
+					sb.append('#');
+				} else
+				{
+					sb.append('.');
+				}
+			}
+			sb.append('\n');
+		}
+		System.out.println(sb.toString());
+	}
+	
+	void day8() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day8.input"));
+		String line = null;
+		boolean[][] grid = new boolean[6][50];
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (line.startsWith("rect"))
+			{
+				Pattern p = Pattern.compile("rect (\\d+)x(\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int rectX = Integer.parseInt(m.group(1));
+				int rectY = Integer.parseInt(m.group(2));
+				for (int x = 0; x < rectX; x++)
+				{
+					for (int y = 0; y < rectY; y++)
+					{
+						grid[y][x] = true;
+					}
+				}
+			} else if (line.startsWith("rotate row"))
+			{
+				Pattern p = Pattern.compile("rotate row y=(\\d+) by (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int row = Integer.parseInt(m.group(1));
+				int amount = Integer.parseInt(m.group(2));	
+				for (int i = 0; i < amount; i++)
+				{
+					boolean saved = grid[row][49];
+					for (int x = 49; x > 0; x--)
+					{
+						grid[row][x] = grid[row][x - 1];
+					}
+					grid[row][0] = saved;
+				}
+				
+			} else if (line.startsWith("rotate column"))
+			{
+				Pattern p = Pattern.compile("rotate column x=(\\d+) by (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int col = Integer.parseInt(m.group(1));
+				int amount = Integer.parseInt(m.group(2));	
+				for (int i = 0; i < amount; i++)
+				{
+					boolean saved = grid[5][col];
+					for (int y = 5; y > 0; y--)
+					{
+						grid[y][col] = grid[y-1][col];
+					}
+					grid[0][col] = saved;
+				}
+			}
+			printGrid(grid);
+		}
+		br.close();
+		int count = 0;
+		for (int x = 0; x < 50; x++)
+		{
+			for (int y = 0; y < 6; y++)
+			{
+				if (grid[y][x])
+				{
+					count++;
+				}
+			}
+		}
+		System.out.println("Count is " + count);
 	}
 	
 	void day7() throws IOException

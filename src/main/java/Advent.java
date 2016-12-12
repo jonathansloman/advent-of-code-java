@@ -32,7 +32,7 @@ public class Advent {
 		Advent a = new Advent();
 		startTime = System.currentTimeMillis();
 		TwentySixteen b = new TwentySixteen();
-		b.day5();
+		b.run();
 		// a.day1();
 		// a.day2();
 		// a.day3();

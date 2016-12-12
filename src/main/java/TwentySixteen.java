@@ -14,9 +14,50 @@ public class TwentySixteen {
 	{
 	}
 	
-	void day6()
+	public void run() throws Exception
 	{
-		
+		day6();
+	}
+	
+	void day6() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day6.input"));
+		String line = null;
+		int charCount[][] = new int[8][26];
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			for (int i = 0; i < 8; i++)
+			{
+				char c = line.charAt(i);
+				charCount[i][c - 'a']++;
+			}
+		}
+		br.close();
+		String message = "";
+		String message2 = "";
+		for (int i = 0; i < 8; i++)
+		{
+			int max = 0;
+			int min = 99999;
+			char maxChar = 'X';
+			char minChar = 'X';
+			for (int k = 0; k < 26; k++)
+			{
+				if (charCount[i][k] > max)
+				{
+					max = charCount[i][k];
+					maxChar = (char)('a' + k);
+				}
+				if (charCount[i][k] < min)
+				{
+					min = charCount[i][k];
+					minChar = (char)('a' + k);
+				}
+			}
+			message = message + Character.toString(maxChar);
+			message2 = message2 + Character.toString(minChar);
+		}
+		System.out.println("Message is: " + message + " message2 is: " + message2);
 	}
 	
 	void day5() throws IOException, NoSuchAlgorithmException

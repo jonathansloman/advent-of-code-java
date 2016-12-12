@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +18,33 @@ public class TwentySixteen {
 	
 	public void run() throws Exception
 	{
-		day9();
+		day10();
+	}
+	
+	private class Bot
+	{
+		int num;
+		int[] chips = new int[2];
+		int numChips = 0;
+		int lowTo = -1;
+		int highTo = -1;
+	}
+	public void day10() throws IOException
+	{
+		Map<Integer, Bot> bots = new HashMap<Integer, Bot>();
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day10.input"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (line.startsWith("bot"))
+			{
+				
+			} else if (line.startsWith("value"))
+			{
+				
+			}
+		}
+		br.close();
 	}
 	
 	private long decompressLength(String str)

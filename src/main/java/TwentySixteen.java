@@ -16,7 +16,66 @@ public class TwentySixteen {
 	
 	public void run() throws Exception
 	{
-		day8();
+		day9();
+	}
+	
+	private long decompressLength(String str)
+	{
+		long total = 0;
+		for (int i = 0; i < str.length(); i++)
+		{
+			if (str.charAt(i) == '(')
+			{
+				int end = str.indexOf(')', i);
+				String marker = str.substring(i + 1,  end);
+				Pattern p = Pattern.compile("(\\d+)x(\\d+)");
+				Matcher m = p.matcher(marker);
+				m.find();
+				int length = Integer.parseInt(m.group(1));
+				int reps = Integer.parseInt(m.group(2));
+				String repString = str.substring(end + 1, end + 1 + length);
+				total += reps * decompressLength(repString);
+				i += length + 1 + marker.length();
+			} else
+			{
+				total++;
+			}
+		}
+		return total;
+	}
+	
+	public void day9() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day9.input"));
+		String line = br.readLine();
+		br.close();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < line.length(); i++)
+		{
+			if (line.charAt(i) == '(')
+			{
+				int end = line.indexOf(')', i);
+				String marker = line.substring(i + 1,  end);
+				Pattern p = Pattern.compile("(\\d+)x(\\d+)");
+				Matcher m = p.matcher(marker);
+				m.find();
+				int length = Integer.parseInt(m.group(1));
+				int reps = Integer.parseInt(m.group(2));
+				String repString = line.substring(end + 1, end + 1 + length);
+				//System.out.println("Got marker: " + marker + "length: " + length + " reps: " + reps + " and repString: " + repString);
+				for (int j = 0; j < reps; j++)
+				{
+					sb.append(repString);
+				}
+				i += length + 1 + marker.length();
+			} else
+			{
+				sb.append(line.charAt(i));
+			}
+		}
+		//System.out.println("String is: " + sb.toString());
+		System.out.println("length is: " + sb.toString().length());
+		System.out.println("length2 is: " + decompressLength(line));
 	}
 	
 	private void printGrid(boolean[][] grid)

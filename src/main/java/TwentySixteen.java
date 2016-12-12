@@ -27,6 +27,7 @@ public class TwentySixteen {
 			
 			int counts[] = new int[26];
 			int max = 0;
+			String decoded = "";
 			for (int i = 0; i < name.length(); i++)
 			{
 				char c = name.charAt(i);
@@ -37,6 +38,10 @@ public class TwentySixteen {
 					{
 						max = counts[c - 'a'];
 					}
+					decoded = decoded + Character.toString((char)('a' + ((c - 'a' + code) % 26)));
+				} else
+				{
+					decoded = decoded + " ";
 				}
 			}
 			String check = "";
@@ -60,7 +65,9 @@ public class TwentySixteen {
 			
 			if (check.equals(checksum)) {
 				sum += code;
-			}		
+			}
+			
+			System.out.println("decoded name: " + decoded);
 		}
 		System.out.println("Sum is: " + sum );
 		br.close();

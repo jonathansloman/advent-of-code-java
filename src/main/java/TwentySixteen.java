@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -9,6 +12,58 @@ import java.util.regex.Pattern;
 public class TwentySixteen {
 	public TwentySixteen()
 	{
+	}
+	
+	void day6()
+	{
+		
+	}
+	
+	void day5() throws IOException, NoSuchAlgorithmException
+	{
+		String input = "ojvtpuvg";
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		int num = 0;
+		int digitsFound = 0;
+		int digitsFound2 = 0;
+		String password = "";
+		char[] password2 = new char[8];
+		for(int i = 0; i < 8; i++)
+		{
+			password2[i] = '-';
+		}
+		while (digitsFound < 8 || digitsFound2 < 8) {
+			String key = input + num;
+			md.reset();
+			byte[] md5 = md.digest(key.getBytes("UTF-8"));
+			BigInteger bi = new BigInteger(1, md5);
+			String hash = String.format("%0" + (md5.length << 1) + "X", bi);
+//			System.out.println("Code is: " + key + " md5 is: " + hash);
+			if (hash.startsWith("00000"))
+			{
+				if (digitsFound < 8)
+				{
+					System.out.println("Password char: " + hash.charAt(5));
+					password = password + hash.charAt(5);
+					digitsFound++;
+				}
+				if (digitsFound2 < 8)
+				{
+					if (Character.isDigit(hash.charAt(5)))
+					{
+						int pos = Integer.parseInt(hash.substring(5, 6));
+						if (pos < 8 && password2[pos] == '-')
+						{
+							password2[pos] = hash.charAt(6);
+							digitsFound2++;
+							System.out.println("Second password is: " + new String(password2));
+						}
+					}
+				}
+			}
+			num++;
+		}
+		System.out.println("password is: " + password);
 	}
 	
 	void day4() throws IOException
@@ -67,7 +122,9 @@ public class TwentySixteen {
 				sum += code;
 			}
 			
-			System.out.println("decoded name: " + decoded);
+			if (decoded.contains("northpole")) {
+				System.out.println("decoded name: " + decoded + " has id: " + code);
+			}
 		}
 		System.out.println("Sum is: " + sum );
 		br.close();

@@ -16,7 +16,94 @@ public class TwentySixteen {
 	
 	public void run() throws Exception
 	{
-		day6();
+		day7();
+	}
+	
+	void day7() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day7.input"));
+		String line = null;
+		int count = 0;
+		int count2 = 0;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			boolean inHypernet = false;
+			char lastChar = 0;
+			boolean hasAbba = false;
+			boolean invalid = false;
+			boolean valid2 = false;
+			char[] abaA = new char[100];
+			char[] abaB = new char[100];
+			int abaCount = 0;
+			char[] babA = new char[100];
+			char[] babB = new char[100];
+			int babCount = 0;
+			for (int i = 0; i < line.length() - 1; i++)
+			{
+				char thisChar = line.charAt(i);
+				if (thisChar == '[')
+				{
+					inHypernet = true;
+					lastChar = 0;
+				} else if (thisChar == ']')
+				{
+					inHypernet = false;
+					lastChar = 0;
+				} else {
+					if (lastChar != thisChar)
+					{
+						if (i < line.length() - 2 && thisChar == line.charAt(i + 1) && lastChar == line.charAt(i + 2))
+						{
+							if (inHypernet)
+							{
+								invalid = true;
+							} else
+							{
+								hasAbba = true;
+							}
+						}
+						if (lastChar == line.charAt(i + 1))
+						{
+							if (inHypernet)
+							{
+								babB[babCount] = lastChar;
+								babA[babCount] = thisChar;
+								babCount++;
+							} else
+							{
+								abaA[abaCount] = lastChar;
+								abaB[abaCount] = thisChar;
+								abaCount++;
+							}
+						}
+					}
+					lastChar = thisChar;
+				}
+			}
+			if (hasAbba && !invalid)
+			{
+				count++;
+			}
+			//System.out.println("abaA is: " + new String(abaA) + "abaB is: " + new String(abaB));
+			//System.out.println("babA is: " + new String(babA) + "babB is: " + new String(babB));
+
+			for (int j = 0; j < babCount; j++)
+			{
+				for (int k = 0; k < abaCount; k++)
+				{
+					if (babA[j] == abaA[k] && babB[j] == abaB[k])
+					{
+						valid2 = true;
+					}
+				}
+			}
+			if (valid2)
+			{
+				count2++;
+			}
+		}
+		br.close();
+		System.out.println("Valid addresses count: " + count + " and valid2: " + count2);
 	}
 	
 	void day6() throws IOException

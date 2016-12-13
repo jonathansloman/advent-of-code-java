@@ -26,25 +26,132 @@ public class TwentySixteen {
 		int num;
 		int[] chips = new int[2];
 		int numChips = 0;
-		int lowTo = -1;
-		int highTo = -1;
+		int lowTo = -999999;
+		int highTo = -999999;
+		
+		Bot(int num)
+		{
+			this.num = num;
+		}
+		
+		boolean check(int[] outputs, Map<Integer, Bot>bots)
+		{
+			if (numChips < 2 || lowTo == -999999)
+			{
+				return false;
+			}
+			int high;
+			int low;
+			if (chips[0] < chips[1])
+			{
+				low = chips[0];
+				high = chips[1];
+			} else
+			{
+				low = chips[1];
+				high = chips[0];
+			}
+			if (high == 61 && low == 17)
+			{
+				System.out.println("Found bot: " + num);
+				// return true; comment out for part 2 as need to run to completion.
+			}
+			if (lowTo >= 10000)
+			{
+				outputs[lowTo - 10000] = low;
+			} else
+			{
+				Bot b = bots.get(lowTo);
+				if (b == null)
+				{
+					b = new Bot(lowTo);
+					bots.put(lowTo, b);
+					
+				}
+				b.chips[b.numChips++] = low;
+				if (b.check(outputs, bots))
+				{
+					// return true;
+				}
+			}
+			if (highTo >= 10000)
+			{
+				outputs[highTo - 10000] = high;
+			} else
+			{
+				Bot b = bots.get(highTo);
+				if (b == null)
+				{
+					b = new Bot(highTo);
+					bots.put(highTo, b);
+					
+				}
+				b.chips[b.numChips++] = high;
+				if (b.check(outputs, bots))
+				{
+					// return true;
+				}
+			}
+			numChips = 0; // our chips have gone.
+			return false;
+		}
 	}
+	
 	public void day10() throws IOException
 	{
 		Map<Integer, Bot> bots = new HashMap<Integer, Bot>();
+		int[] outputs = new int[1000];
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day10.input"));
 		String line = null;
-		while ((line = br.readLine()) != null) {
+		boolean done = false;
+		while ((line = br.readLine()) != null && !done) {
 			line = line.trim();
 			if (line.startsWith("bot"))
 			{
-				
+				Pattern p = Pattern.compile("bot (\\d+) gives low to (bot|output) (\\d+) and high to (bot|output) (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int bot = Integer.parseInt(m.group(1));
+				String lowDest = m.group(2);
+				int low = Integer.parseInt(m.group(3));
+				if (lowDest.equals("output"))
+				{
+					low = low + 10000;
+				}
+				String highDest = m.group(4);
+				int high = Integer.parseInt(m.group(5));
+				if (highDest.equals("output"))
+				{
+					high = high + 10000;
+				}
+				Bot b = bots.get(bot);
+				if (b == null)
+				{
+					b = new Bot(bot);
+					bots.put(bot,  b);
+				}
+				b.lowTo = low;
+				b.highTo = high;
+				done = b.check(outputs, bots);			
 			} else if (line.startsWith("value"))
 			{
-				
+				Pattern p = Pattern.compile("value (\\d+) goes to bot (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int value = Integer.parseInt(m.group(1));
+				int bot = Integer.parseInt(m.group(2));
+				Bot b = bots.get(bot);
+				if (b == null)
+				{
+					b = new Bot(bot);
+					bots.put(bot,  b);
+				}
+				b.chips[b.numChips++] = value;
+				done = b.check(outputs, bots);
 			}
 		}
 		br.close();
+		System.out.println("outputs values 0: " + outputs[0] + " 1: " + outputs[1] + " 2: " + outputs[2]);
 	}
 	
 	private long decompressLength(String str)

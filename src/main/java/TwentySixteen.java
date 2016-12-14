@@ -18,7 +18,190 @@ public class TwentySixteen {
 	
 	public void run() throws Exception
 	{
-		day10();
+		day11();
+	}
+	
+	private boolean checkValid(boolean[][] floor_generators, boolean[][] floor_chips)
+	{
+		for (int f = 0; f < 4; f++)
+		{
+			boolean hasGenerators = false;
+			for (int g = 0; g < 5; g++)
+			{
+				if (floor_generators[f][g])
+				{
+					hasGenerators = true;
+				}
+			}
+			if (hasGenerators)
+			{
+				for (int c = 0; c < 5; c++)
+				{
+					if (floor_chips[f][c] && !floor_generators[f][c])
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean checkDone(boolean[][] floor_generators, boolean[][] floor_chips)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			if (!floor_chips[3][i] || !floor_generators[3][i])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private void makeMove(boolean[][]floor_generators, boolean[][]floor_chips, int elevator, int count, 
+			int lm_chip1, int lm_chip2, int lm_gen1, int lm_gen2, boolean moveUp)
+	{
+		//System.out.println("Elevator is: " + elevator);
+		if (checkDone(floor_generators, floor_chips))
+		{
+			System.out.println("Done in " + count + " moves");
+			return;
+		}
+		if (!checkValid(floor_generators, floor_chips))
+		{
+			return;
+		}
+		count++;
+		if (elevator < 3) // try moving up first
+		{
+			// try moving generators
+			for (int i = 0; i < 5; i++)
+			{
+				if (floor_generators[elevator][i])
+				{
+					floor_generators[elevator][i] = false;
+					floor_generators[elevator + 1][i] = true;
+					if (moveUp || (lm_gen1 != i || lm_gen2 != -1 || lm_chip1 != -1)) {
+						makeMove(floor_generators, floor_chips, elevator + 1, count, -1, -1, i, -1, true);
+					}
+					// now try moving with another generator
+					for (int j = i + 1; j < 5; j++)
+					{
+						if (floor_generators[elevator][j])
+						{
+							floor_generators[elevator][j] = false;
+							floor_generators[elevator + 1][j] = true;
+							if (moveUp || (lm_gen1 != i || lm_gen2 != j)) {
+								makeMove(floor_generators, floor_chips, elevator + 1, count, -1, -1, i, j, true);
+							}
+							// and undo it
+							floor_generators[elevator][j] = true;
+							floor_generators[elevator + 1][j] = false;
+						}
+					}
+					// now try moving with another chip
+					for (int k = 0; k < 5; k++)
+					{
+						if (floor_chips[elevator][k])
+						{
+							floor_chips[elevator][k] = false;
+							floor_chips[elevator + 1][k] = true;
+							if (moveUp || (lm_gen1 != i || lm_chip1 != k)) 
+							{
+								makeMove(floor_generators, floor_chips, elevator + 1, count, k, -1, i, -1, true);
+							}
+							// and undo it
+							floor_chips[elevator][k] = true;
+							floor_chips[elevator + 1][k] = false;	
+						}
+					}
+					// and undo it
+					floor_generators[elevator][i] = true;
+					floor_generators[elevator + 1][i] = false;
+				}
+			}
+			// now try moving chips
+			for (int l = 0; l < 5; l++)
+			{
+				if (floor_chips[elevator][l])
+				{
+					floor_chips[elevator][l] = false;
+					floor_chips[elevator + 1][l] = true;
+					if (moveUp || (lm_chip1 != l || lm_chip2 != -1 || lm_gen1 != -1)) 
+					{
+						makeMove(floor_generators, floor_chips, elevator + 1, count, l, -1, -1, -1, true);
+					}
+					// and try moving with another chip
+					for (int m = l + 1; m < 5; m++)
+					{
+						floor_chips[elevator][m] = false;
+						floor_chips[elevator + 1][m] = true;
+						if (moveUp || (lm_chip1 != l || lm_chip2 != m)) 
+						{
+							makeMove(floor_generators, floor_chips, elevator + 1, count, l, m, -1, -1, true);
+						}
+						// and undo it
+						floor_chips[elevator][m] = true;
+						floor_chips[elevator + 1][m] = false;
+					}
+					// and undo it
+					floor_chips[elevator][l] = true;
+					floor_chips[elevator + 1][l] = false;	
+				}				
+			}
+		}
+		// try moving back down, but let's try only taking chips down, never generators
+		if (elevator > 0)
+		{
+			for (int n = 0; n < 5; n++)
+			{
+				if (floor_chips[elevator][n])
+				{
+					floor_chips[elevator][n] = false;
+					floor_chips[elevator - 1][n] = true;
+					if (!moveUp || (lm_chip1 != n || lm_chip2 != -1 || lm_gen1 != -1)) 
+					{
+						makeMove(floor_generators, floor_chips, elevator - 1, count, n, -1, -1, -1, false);
+					}
+					// and try moving with another chip
+					for (int o = n + 1; o < 5; o++)
+					{
+						floor_chips[elevator][o] = false;
+						floor_chips[elevator - 1][o] = true;
+						if (!moveUp || (lm_chip1 != n || lm_chip2 != o || lm_gen1 != -1)) 
+						{
+							makeMove(floor_generators, floor_chips, elevator - 1, count, n, o, -1, -1, false);
+						}
+						// and undo it
+						floor_chips[elevator][o] = true;
+						floor_chips[elevator - 1][o] = false;
+					}
+					// and undo it
+					floor_chips[elevator][n] = true;
+					floor_chips[elevator - 1][n] = false;	
+				}				
+			}			
+		}
+	}
+	
+	public void day11()
+	{
+		String[] names = {"promethium", "cobalt", "curium", "ruthenium", "plutonium"};
+		boolean floor_generators[][] = {
+				{true,  false, false, false, false},
+				{false, true,  true,  true,  true},
+				{false, false, false, false, false},
+				{false, false, false, false, false}};
+		boolean floor_chips[][] = {
+				{true,  false, false, false, false},
+				{false, false, false, false, false},
+				{false, true,  true,  true,  true},
+				{false, false, false, false, false}};
+		int elevator = 0;
+		int count = 0;
+		System.out.println("First: " + floor_generators.length + " second: " + floor_generators[0].length);
+		makeMove(floor_generators, floor_chips, elevator, count, -1, -1, -1, -1, false);
 	}
 	
 	private class Bot

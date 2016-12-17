@@ -27,14 +27,29 @@ public class TwentySixteen
 	}
 
 	List<Day11State> day11States = new ArrayList<Day11State>();
-	String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu" };
-	int day11Num=5;
-	boolean floor_generators[][] = { { true, false, false, false, false },
-			{ false, true, true, true, true }, { false, false, false, false, false },
-			{ false, false, false, false, false } };
-	boolean floor_chips[][] = { { true, false, false, false, false },
-			{ false, false, false, false, false }, { false, true, true, true, true },
-			{ false, false, false, false, false } };
+	// part 1
+	//String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu" };
+	//int day11Num=5;
+	//boolean floor_generators[][] = { { true, false, false, false, false },
+	//		{ false, true, true, true, true }, { false, false, false, false, false },
+	//		{ false, false, false, false, false } };
+	//boolean floor_chips[][] = { { true, false, false, false, false },
+	//		{ false, false, false, false, false }, { false, true, true, true, true },
+	//		{ false, false, false, false, false } };
+	
+	// part2
+	String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu", "El", "Di" };
+	int day11Num=7;
+	boolean floor_generators[][] = { 
+			{ true,  false, false, false, false, true, true },
+			{ false, true,  true,  true,  true,  false, false }, 
+			{ false, false, false, false, false, false, false },
+			{ false, false, false, false, false, false, false } };
+	boolean floor_chips[][] = { 
+			{ true,  false, false, false, false, true,  true },
+			{ false, false, false, false, false, false, false }, 
+			{ false, true,  true,  true,  true,  false, false },
+			{ false, false, false, false, false, false, false } };
 	
 //	boolean floor_generators[][] = {
 //			{false, false},

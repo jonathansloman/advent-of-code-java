@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,281 +26,283 @@ public class TwentySixteen
 		day11();
 	}
 
-	private boolean checkValid(boolean[][] floor_generators, boolean[][] floor_chips)
-	{
-		for (int f = 0; f < 4; f++)
-		{
-			boolean hasGenerators = false;
-			for (int g = 0; g < 5; g++)
-			{
-				if (floor_generators[f][g])
-				{
-					hasGenerators = true;
-				}
-			}
-			if (hasGenerators)
-			{
-				for (int c = 0; c < 5; c++)
-				{
-					if (floor_chips[f][c] && !floor_generators[f][c])
-					{
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	private boolean checkDone(boolean[][] floor_generators, boolean[][] floor_chips)
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			if (!floor_chips[3][i] || !floor_generators[3][i])
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void makeMove(int elevator,
-			int count)
-	{
-		String state = day11toString(floor_generators, floor_chips, elevator);
-
-		if (count >= day11min)
-		{
-		//	System.out.println("count exceeded\n" + state);
-			return;
-		}
-		if (checkDone(floor_generators, floor_chips))
-		{
-			System.out.println("Done in " + count + " moves, state is\n" + 
-					day11toString(floor_generators, floor_chips, elevator));
-			day11min = count;
-			return;
-		}
-		if (!checkValid(floor_generators, floor_chips))
-		{
-		//	System.out.println("Invalid:\n" + state);
-			return;
-		}
-		for (String s : day11States)
-		{
-			if (s.equals(state))
-			{
-		//		System.out.println("Already been here");
-				return;
-			}
-		}
-		day11States.add(state);
-		//System.out.println("New state, count: " + count + "\n" + state);
-		count++;
-		if (elevator < 3) // try moving up first
-		{
-			// try moving generators
-			for (int i = 0; i < 5; i++)
-			{
-				if (floor_generators[elevator][i])
-				{
-					floor_generators[elevator][i] = false;
-					floor_generators[elevator + 1][i] = true;
-
-					makeMove(elevator + 1, count);
-
-					// now try moving with another generator
-					for (int j = i + 1; j < 5; j++)
-					{
-						if (floor_generators[elevator][j])
-						{
-							floor_generators[elevator][j] = false;
-							floor_generators[elevator + 1][j] = true;
-
-							makeMove(elevator + 1, count);
-
-							// and undo it
-							floor_generators[elevator][j] = true;
-							floor_generators[elevator + 1][j] = false;
-						}
-					}
-					// now try moving with another chip
-					for (int k = 0; k < 5; k++)
-					{
-						if (floor_chips[elevator][k])
-						{
-							floor_chips[elevator][k] = false;
-							floor_chips[elevator + 1][k] = true;
-
-							makeMove(elevator + 1, count);
-
-							// and undo it
-							floor_chips[elevator][k] = true;
-							floor_chips[elevator + 1][k] = false;
-						}
-					}
-					// and undo it
-					floor_generators[elevator][i] = true;
-					floor_generators[elevator + 1][i] = false;
-				}
-			}
-			// now try moving chips
-			for (int l = 0; l < 5; l++)
-			{
-				if (floor_chips[elevator][l])
-				{
-					floor_chips[elevator][l] = false;
-					floor_chips[elevator + 1][l] = true;
-
-					makeMove(elevator + 1, count);
-					// and try moving with another chip
-					for (int m = l + 1; m < 5; m++)
-					{
-						if (floor_chips[elevator][m])
-						{
-							floor_chips[elevator][m] = false;
-							floor_chips[elevator + 1][m] = true;
-							makeMove(elevator + 1, count);
-							// and undo it
-							floor_chips[elevator][m] = true;
-							floor_chips[elevator + 1][m] = false;
-						}
-					}
-					// and undo it
-					floor_chips[elevator][l] = true;
-					floor_chips[elevator + 1][l] = false;
-				}
-			}
-		}
-		// try moving back down, but let's try only taking chips down, never
-		// generators
-		if (elevator > 0)
-		{
-			// try moving generators
-			for (int i = 0; i < 5; i++)
-			{
-				if (floor_generators[elevator][i])
-				{
-					floor_generators[elevator][i] = false;
-					floor_generators[elevator - 1][i] = true;
-					makeMove(elevator - 1, count);
-					// now try moving with another generator
-					for (int j = i + 1; j < 5; j++)
-					{
-						if (floor_generators[elevator][j])
-						{
-							floor_generators[elevator][j] = false;
-							floor_generators[elevator - 1][j] = true;
-							makeMove(elevator - 1, count);
-							// and undo it
-							floor_generators[elevator][j] = true;
-							floor_generators[elevator - 1][j] = false;
-						}
-					}
-					// now try moving with another chip
-					for (int k = 0; k < 5; k++)
-					{
-						if (floor_chips[elevator][k])
-						{
-							floor_chips[elevator][k] = false;
-							floor_chips[elevator - 1][k] = true;
-							makeMove(elevator - 1, count);
-							// and undo it
-							floor_chips[elevator][k] = true;
-							floor_chips[elevator - 1][k] = false;
-						}
-					}
-					// and undo it
-					floor_generators[elevator][i] = true;
-					floor_generators[elevator - 1][i] = false;
-				}
-			}
-			// now try moving chips
-			for (int l = 0; l < 5; l++)
-			{
-				if (floor_chips[elevator][l])
-				{
-					floor_chips[elevator][l] = false;
-					floor_chips[elevator - 1][l] = true;
-					makeMove(elevator - 1, count);
-					// and try moving with another chip
-					for (int m = l + 1; m < 5; m++)
-					{
-						if (floor_chips[elevator][m])
-						{
-							floor_chips[elevator][m] = false;
-							floor_chips[elevator - 1][m] = true;
-
-							makeMove(elevator - 1, count);
-							// and undo it
-							floor_chips[elevator][m] = true;
-							floor_chips[elevator - 1][m] = false;
-						}
-					}
-					// and undo it
-					floor_chips[elevator][l] = true;
-					floor_chips[elevator - 1][l] = false;
-				}
-			}
-		}
-		//System.out.println("backtracking");
-	}
-
-	private String day11toString(boolean[][] floor_generators,
-			boolean[][] floor_chips, int elevator)
-	{
-		StringBuffer sb = new StringBuffer();
-		for (int i = 3; i >= 0; i--)
-		{
-			if (elevator == i)
-			{
-				sb.append("E ");
-			} else
-			{
-				sb.append(". ");
-			}
-			for (int j = 0; j < 5; j++)
-			{
-				if (floor_generators[i][j])
-				{
-					sb.append(day11names[j]);
-					sb.append("G ");
-				} else
-				{
-					sb.append("... ");
-				}
-				if (floor_chips[i][j])
-				{
-					sb.append(day11names[j]);
-					sb.append("C ");
-				} else
-				{
-					sb.append("... ");
-				}
-			}
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
-
-	List<String> day11States = new ArrayList<String>();
+	List<Day11State> day11States = new ArrayList<Day11State>();
 	String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu" };
-	int day11min = 120;
+	int day11Num=5;
 	boolean floor_generators[][] = { { true, false, false, false, false },
 			{ false, true, true, true, true }, { false, false, false, false, false },
 			{ false, false, false, false, false } };
 	boolean floor_chips[][] = { { true, false, false, false, false },
 			{ false, false, false, false, false }, { false, true, true, true, true },
 			{ false, false, false, false, false } };
+	
+//	boolean floor_generators[][] = {
+//			{false, false},
+//			{true, false},
+//			{false, true},
+//			{false, false}};
+//	boolean floor_chips[][] = {
+//			{true, true},
+//			{false, false},
+//			{false, false},
+//			{false, false}};
+	private class Day11State
+	{
+		boolean[][] generators;
+		boolean[][] chips;
+		int elevator;
+		int count;
+		
+		Day11State(int elevator, int count, boolean[][] generators, boolean[][] chips)
+		{
+			this.generators = generators;
+			this.chips = chips;
+			this.elevator = elevator;
+			this.count = count;
+		}
+		
+		Day11State(Day11State copy, int direction)
+		{
+			this.count = copy.count + 1;
+			this.elevator = copy.elevator + direction;
+			this.chips = copy_from(copy.chips);
+			this.generators = copy_from(copy.generators);
+		}
+		
+		boolean checkEquals(Day11State other)
+		{
+			if (elevator != other.elevator)
+			{
+				return false;
+			}
+			for (int f = 0; f < 4; f++)
+			{
+				for (int i = 0; i < day11Num; i++)
+				{
+					if (generators[f][i] != other.generators[f][i])
+					{
+						return false;
+					}
+					if (chips[f][i] != other.chips[f][i])
+					{
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		
+		boolean checkAll(List<Day11State> visited)
+		{
+			if (!checkValid())
+			{
+				//System.out.println("State is invalid\n" + toString());
+				return false;
+			}
+			if (checkDone())
+			{
+				System.out.println("Done in: " + count);
+				return false;
+			}
+			for (Day11State s : visited)
+			{
+				if (s.checkEquals(this))
+				{ 
+					//System.out.println("State is already visited\n" + toString());
+					return false;
+				}
+			}
+			visited.add(this);
+			return true;
+		}
+		
+		boolean checkValid()
+		{
+			for (int f = 0; f < 4; f++)
+			{
+				boolean hasGenerators = false;
+				for (int g = 0; g < day11Num; g++)
+				{
+					if (generators[f][g])
+					{
+						hasGenerators = true;
+					}
+				}
+				if (hasGenerators)
+				{
+					for (int c = 0; c < day11Num; c++)
+					{
+						if (chips[f][c] && !generators[f][c])
+						{
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+		boolean checkDone()
+		{
+			for (int i = 0; i < day11Num; i++)
+			{
+				if (!chips[3][i] || !generators[3][i])
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		public String toString()
+		{
+			StringBuffer sb = new StringBuffer();
+			for (int i = 3; i >= 0; i--)
+			{
+				if (elevator == i)
+				{
+					sb.append("E ");
+				} else
+				{
+					sb.append(". ");
+				}
+				for (int j = 0; j < day11Num; j++)
+				{
+					if (generators[i][j])
+					{
+						sb.append(day11names[j]);
+						sb.append("G ");
+					} else
+					{
+						sb.append("... ");
+					}
+					if (chips[i][j])
+					{
+						sb.append(day11names[j]);
+						sb.append("C ");
+					} else
+					{
+						sb.append("... ");
+					}
+				}
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
+	}
 
+	boolean[][] copy_from(boolean[][] arr)
+	{
+		boolean[][] ret = new boolean[arr.length][arr[0].length];
+		for (int x = 0; x < arr.length; x++) {
+			for (int y = 0; y < arr[0].length; y++) {
+				ret[x][y] = arr[x][y];
+			}
+		}
+		return ret;
+	}
+	
 	public void day11()
 	{
-		
-		int elevator = 0;
-		int count = 0;
-		System.out.println(
-				"Start: \n" + day11toString(floor_generators, floor_chips, elevator));
-		makeMove(elevator, count);
+		int[] dirs = {1, -1};
+		// we need to do a breadth first search, not depth first. 
+		Day11State state = new Day11State(0, 0, copy_from(floor_generators), copy_from(floor_chips));
+		day11States.add(state);
+		Queue<Day11State> q = new ArrayDeque<Day11State>();
+		q.add(state);
+		while(true)
+		{
+			Day11State s = q.poll();
+			if (s == null)
+			{
+				break;
+			}
+			//System.out.println("Processing state: \n" + s.toString());
+			// add all 'next moves' to the queue.
+			for (int dir: dirs)
+			{
+				if (s.elevator + dir < 0 || s.elevator + dir > 3)
+				{
+					continue;
+				}
+				// try moving generators
+				for (int i = 0; i < day11Num; i++)
+				{
+					if (s.generators[s.elevator][i])
+					{
+						Day11State next1 = new Day11State(s, dir);
+						next1.generators[s.elevator][i] = false;
+						next1.generators[s.elevator + dir][i] = true;
+						if (next1.checkAll(day11States))
+						{
+							q.add(next1);
+						}
+						// now try moving with another generator
+						for (int j = i + 1; j < day11Num; j++)
+						{
+							if (s.generators[s.elevator][j])
+							{
+								Day11State next2 = new Day11State(s, dir);
+								next2.generators[s.elevator][i] = false;
+								next2.generators[s.elevator + dir][i] = true;
+								next2.generators[s.elevator][j] = false;
+								next2.generators[s.elevator + dir][j] = true;
+								if (next2.checkAll(day11States))
+								{
+									q.add(next2);
+								}
+							}
+						}
+						// now try moving with another chip
+						for (int k = 0; k < day11Num; k++)
+						{
+							if (s.chips[s.elevator][k])
+							{
+								Day11State next3 = new Day11State(s, dir);
+								next3.generators[s.elevator][i] = false;
+								next3.generators[s.elevator + dir][i] = true;
+								next3.chips[s.elevator][k] = false;
+								next3.chips[s.elevator + dir][k] = true;
+								if (next3.checkAll(day11States))
+								{
+									q.add(next3);
+								}
+							}
+						}
+					}
+				}
+				// now try moving chips
+				for (int l = 0; l < day11Num; l++)
+				{
+					if (s.chips[s.elevator][l])
+					{
+						Day11State next4 = new Day11State(s, dir);
+						next4.chips[s.elevator][l] = false;
+						next4.chips[s.elevator + dir][l] = true;
+						if (next4.checkAll(day11States))
+						{
+							q.add(next4);
+						}
+						// and try moving with another chip
+						for (int m = l + 1; m < day11Num; m++)
+						{
+							if (s.chips[s.elevator][m])
+							{
+								Day11State next5 = new Day11State(s, dir);
+								next5.chips[s.elevator][l] = false;
+								next5.chips[s.elevator + dir][l] = true;
+								next5.chips[s.elevator][m] = false;
+								next5.chips[s.elevator + dir][m] = true;
+								if (next5.checkAll(day11States))
+								{
+									q.add(next5);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private class Bot

@@ -23,7 +23,83 @@ public class TwentySixteen
 
 	public void run() throws Exception
 	{
-		day11();
+		day12();
+	}
+	
+	public void day12() throws IOException
+	{
+		int[] registers = new int[4];
+		// part 2
+		registers[2] = 1;
+		List<String> instructions = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day12.input"));
+		String line = null;
+		while ((line = br.readLine()) != null)
+		{
+			line = line.trim();
+			instructions.add(line);
+		}
+		br.close();
+		int place = 0;
+		while (place < instructions.size())
+		{
+			String instr = instructions.get(place);
+			if (instr.startsWith("cpy"))
+			{
+				Pattern p = Pattern.compile(
+						"cpy ([a-d]|\\d+) ([a-d])");
+				Matcher m = p.matcher(instr);
+				m.find();
+				String valueStr = m.group(1);
+				String destination = m.group(2);
+				int reg = valueStr.charAt(0) - 'a';
+				int value;
+				if (reg < 0 || reg > 3)
+				{
+					value = Integer.parseInt(valueStr);
+				} else
+				{
+					value = registers[reg];
+				}
+				int dest = destination.charAt(0) - 'a';
+				registers[dest] = value;
+				place++;
+
+			} else if (instr.startsWith("jnz"))
+			{
+				int reg = instr.charAt(4) - 'a';
+				boolean isZero = false;
+				if (reg >= 0 && reg <= 3)
+				{
+					if (registers[reg] == 0)
+					{
+						isZero = true;
+					}
+				} else if (instr.charAt(4) == '0')
+				{
+					isZero = true;
+				}
+				if (!isZero)
+				{
+					int jump = Integer.parseInt(instr.substring(6));
+					place += jump;
+				} else
+				{
+					place++;
+				}
+			} else if (instr.startsWith("inc"))
+			{
+				int reg = instr.charAt(4) - 'a';
+				registers[reg]++;
+				place++;
+			} else if (instr.startsWith("dec"))
+			{
+				int reg = instr.charAt(4) - 'a';
+				registers[reg]--;
+				place++;
+			}
+		}
+		System.out.println("a is: " + registers[0]);
 	}
 
 	Set<String> day11States = new HashSet<String>();

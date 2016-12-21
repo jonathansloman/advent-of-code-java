@@ -26,17 +26,18 @@ public class TwentySixteen
 		day11();
 	}
 
-	List<Day11State> day11States = new ArrayList<Day11State>();
+	Set<String> day11States = new HashSet<String>();
 	// part 1
-	//String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu" };
-	//int day11Num=5;
-	//boolean floor_generators[][] = { { true, false, false, false, false },
-	//		{ false, true, true, true, true }, { false, false, false, false, false },
-	//		{ false, false, false, false, false } };
-	//boolean floor_chips[][] = { { true, false, false, false, false },
-	//		{ false, false, false, false, false }, { false, true, true, true, true },
-	//		{ false, false, false, false, false } };
-	
+	/*
+	String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu" };
+	int day11Num=5;
+	boolean floor_generators[][] = { { true, false, false, false, false },
+			{ false, true, true, true, true }, { false, false, false, false, false },
+			{ false, false, false, false, false } };
+	boolean floor_chips[][] = { { true, false, false, false, false },
+			{ false, false, false, false, false }, { false, true, true, true, true },
+			{ false, false, false, false, false } };
+			*/
 	// part2
 	String[] day11names = { "Pm", "Co", "Cm", "Ru", "Pu", "El", "Di" };
 	int day11Num=7;
@@ -51,6 +52,25 @@ public class TwentySixteen
 			{ false, true,  true,  true,  true,  false, false },
 			{ false, false, false, false, false, false, false } };
 	
+	
+	int[][] day11Combinations = generateCombinations(day11Num);
+	
+	int fact(int num)
+	{
+		int factorial = 1;
+		for (int i = 2; i <= num; i++)
+		{
+			factorial = factorial * i;
+		}
+		return factorial;
+	}
+	int[][] generateCombinations(int num)
+	{
+		int[][] result = new int[fact(num)][num];
+		
+		return result;
+	}
+
 //	boolean floor_generators[][] = {
 //			{false, false},
 //			{true, false},
@@ -84,30 +104,7 @@ public class TwentySixteen
 			this.generators = copy_from(copy.generators);
 		}
 		
-		boolean checkEquals(Day11State other)
-		{
-			if (elevator != other.elevator)
-			{
-				return false;
-			}
-			for (int f = 0; f < 4; f++)
-			{
-				for (int i = 0; i < day11Num; i++)
-				{
-					if (generators[f][i] != other.generators[f][i])
-					{
-						return false;
-					}
-					if (chips[f][i] != other.chips[f][i])
-					{
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-		
-		boolean checkAll(List<Day11State> visited)
+		boolean checkAll(Set<String> visited)
 		{
 			if (!checkValid())
 			{
@@ -119,15 +116,11 @@ public class TwentySixteen
 				System.out.println("Done in: " + count);
 				return false;
 			}
-			for (Day11State s : visited)
-			{
-				if (s.checkEquals(this))
-				{ 
-					//System.out.println("State is already visited\n" + toString());
-					return false;
-				}
+			String mystate = toStringForCheck();
+			if (visited.contains(mystate)) {
+				return false;
 			}
-			visited.add(this);
+			visited.add(mystate);
 			return true;
 		}
 		
@@ -204,6 +197,59 @@ public class TwentySixteen
 			}
 			return sb.toString();
 		}
+		
+		public String toStringForCheck()
+		{
+			int[] perm = new int[day11Num]; // store our permutation
+			int permIndex = 0;
+			for (int z = 0; z < day11Num; z++)
+			{
+				perm[z] = -1;
+			}
+			StringBuffer sb = new StringBuffer();
+			/* first determine our permutation */
+			for (int i = 3; i >= 0; i--)
+			{
+
+				for (int j = 0; j < day11Num; j++)
+				{
+					if (generators[i][j])
+					{
+						perm[permIndex++] = j;
+
+					} 
+				}
+			}
+			for (int i = 3; i >= 0; i--)
+			{
+				if (elevator == i)
+				{
+					sb.append("E ");
+				} else
+				{
+					sb.append(". ");
+				}
+				for (int j = 0; j < day11Num; j++)
+				{
+					if (generators[i][perm[j]])
+					{
+						sb.append(j);
+					} else
+					{
+						sb.append(".");
+					}
+					if (chips[i][perm[j]])
+					{
+						sb.append(j);
+					} else
+					{
+						sb.append(".");
+					}
+				}
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
 	}
 
 	boolean[][] copy_from(boolean[][] arr)
@@ -222,9 +268,10 @@ public class TwentySixteen
 		int[] dirs = {1, -1};
 		// we need to do a breadth first search, not depth first. 
 		Day11State state = new Day11State(0, 0, copy_from(floor_generators), copy_from(floor_chips));
-		day11States.add(state);
+		day11States.add(state.toStringForCheck());
 		Queue<Day11State> q = new ArrayDeque<Day11State>();
 		q.add(state);
+		int max = 1;
 		while(true)
 		{
 			Day11State s = q.poll();
@@ -232,6 +279,12 @@ public class TwentySixteen
 			{
 				break;
 			}
+			if (s.count > max)
+			{
+				max = s.count;
+				System.out.println("Size of queue is: " + q.size() + " size of states is: " + day11States.size() + " count is: " + s.count);
+			}
+
 			//System.out.println("Processing state: \n" + s.toString());
 			// add all 'next moves' to the queue.
 			for (int dir: dirs)
@@ -268,20 +321,18 @@ public class TwentySixteen
 								}
 							}
 						}
-						// now try moving with another chip
-						for (int k = 0; k < day11Num; k++)
+						// now try moving with another chip - must be the same chip.
+
+						if (s.chips[s.elevator][i])
 						{
-							if (s.chips[s.elevator][k])
+							Day11State next3 = new Day11State(s, dir);
+							next3.generators[s.elevator][i] = false;
+							next3.generators[s.elevator + dir][i] = true;
+							next3.chips[s.elevator][i] = false;
+							next3.chips[s.elevator + dir][i] = true;
+							if (next3.checkAll(day11States))
 							{
-								Day11State next3 = new Day11State(s, dir);
-								next3.generators[s.elevator][i] = false;
-								next3.generators[s.elevator + dir][i] = true;
-								next3.chips[s.elevator][k] = false;
-								next3.chips[s.elevator + dir][k] = true;
-								if (next3.checkAll(day11States))
-								{
-									q.add(next3);
-								}
+								q.add(next3);
 							}
 						}
 					}

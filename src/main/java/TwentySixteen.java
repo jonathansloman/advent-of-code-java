@@ -22,7 +22,65 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day16();
+		day17();
+	}
+	
+	void findPath(MessageDigest md, int x, int y, String path, String input) throws IOException
+	{
+		if (path.length() >= day17Min)
+		{
+		// day 2	return;
+		}
+		if (x < 0 || x > 3 || y < 0 || y > 3)
+		{
+			return;
+		}
+		if (x == 3 && y == 3)
+		{
+			if (path.length() < day17Min)
+			{
+				day17Min = path.length();
+				System.out.println("New minimum path: " + path);
+			}
+			if (path.length() > day17Max)
+			{
+				day17Max = path.length();
+			}
+			return;
+		}
+		md.reset();
+		String key = input + path;
+		byte[] md5 = md.digest(key.getBytes("UTF-8"));
+		BigInteger bi = new BigInteger(1, md5);
+		String hash = String.format("%0" + (md5.length << 1) + "x", bi);
+		if (hash.charAt(0) - 'b' >= 0)
+		{
+			findPath(md, x, y - 1, path + "U", input);
+		}
+		if (hash.charAt(1) - 'b' >= 0)
+		{
+			findPath(md, x, y + 1, path + "D", input);
+		}
+		if (hash.charAt(2) - 'b' >= 0)
+		{
+			findPath(md, x - 1, y, path + "L", input);
+		}
+		if (hash.charAt(3) - 'b' >= 0)
+		{
+			findPath(md, x + 1, y, path + "R", input);
+		}
+	}
+	
+	int day17Min = 999;
+	int day17Max = 0;
+	void day17() throws IOException, NoSuchAlgorithmException
+	{
+		String input = "ioramepc";
+		MessageDigest md = MessageDigest.getInstance("MD5");
+
+		findPath(md, 0, 0, "", input);
+		System.out.println("Max length is: " + day17Max);
+		
 	}
 
 	void day16()

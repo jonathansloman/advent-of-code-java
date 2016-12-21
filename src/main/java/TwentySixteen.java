@@ -22,9 +22,51 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day15();
+		day16();
 	}
 
+	void day16()
+	{
+		int targetLength = 35651584; // 272;
+		String input = "10011111011011001";
+		
+		while (input.length() < targetLength)
+		{
+			StringBuffer bSb = new StringBuffer();
+			for (int i = 0; i < input.length(); i++)
+			{
+				if (input.charAt(input.length() - i - 1) == '0')
+				{
+					bSb.append('1');
+				} else
+				{
+					bSb.append('0');
+				}
+			}
+			input = input + "0" + bSb.toString();
+		}
+		input = input.substring(0,  targetLength);
+		// System.out.println("Input is length: " + input.length() + " and is: " + input);
+		boolean isEven = true;
+		String checksum = input;
+		while (isEven)
+		{
+			StringBuffer cSb = new StringBuffer();
+			for (int i = 0; i < checksum.length() / 2; i++)
+			{
+				if (checksum.charAt(i * 2) == checksum.charAt(i * 2 + 1))
+				{
+					cSb.append('1');
+				} else {
+					cSb.append('0');
+				}
+			}
+			checksum = cSb.toString();
+			isEven = (checksum.length() % 2) == 0;
+		}
+		System.out.println("Checksum is: " + checksum);
+	}
+	
 	void day15()
 	{
 		int[] discSizes = {17, 19, 7, 13, 5, 3, 11};

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +22,105 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day13();
+		day14();
+	}
+
+	List<Character> findQuintuples(String hash) {
+		List<Character> result = new ArrayList<Character>();
+		int repeats = 0;
+		for (int i = 1; i < hash.length(); i++) {
+			if (hash.charAt(i - 1) == hash.charAt(i)) {
+				repeats++;
+				if (repeats == 4) {
+					if (!result.contains(hash.charAt(i))) {
+						result.add(hash.charAt(i));
+					}
+				}
+			} else {
+				repeats = 0;
+			}
+		}
+		return result;
+	}
+
+	List<Character> findTriples(String hash) {
+		List<Character> result = new ArrayList<Character>();
+		int repeats = 0;
+		for (int i = 1; i < hash.length(); i++) {
+			if (hash.charAt(i - 1) == hash.charAt(i)) {
+				repeats++;
+				if (repeats == 2) {
+					if (!result.contains(hash.charAt(i))) {
+						result.add(hash.charAt(i));
+						return result;
+					}
+				}
+			} else {
+				repeats = 0;
+			}
+		}
+		return result;
+	}
+
+	void day14() throws IOException, NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		String input = "ahsbgdzn";
+		int countKeys = 0;
+		int index = 0;
+		Map<Integer, List<Character>> triples = new HashMap<Integer, List<Character>>();
+		
+		SortedSet<Integer> keys = new TreeSet<Integer>();
+
+		// we go beyond 64 to make sure we get the 64 first as we don't find them in strict order.
+		while (countKeys < 80) {
+			md.reset();
+			String key = input + index;
+			for (int i = 0; i < 2017; i++) {
+				byte[] md5 = md.digest(key.getBytes("UTF-8"));
+				BigInteger bi = new BigInteger(1, md5);
+				key = String.format("%0" + (md5.length << 1) + "x", bi);
+				if (index == 0)
+				{
+					System.out.println("hash iteration: " + i + " is " + key);
+				}
+			}
+
+			List<Character> trips = findTriples(key);
+			if (!trips.isEmpty()) {
+				triples.put(index, trips);
+			}
+			List<Character> quints = findQuintuples(key);
+			for (char c : quints) {
+
+				for (int test = index - 1000; test < index; test++) {
+					if (test >= 0) {
+						List<Character> tripTest = triples.get(test);
+						if (tripTest != null) {
+							for (char t : tripTest) {
+								if (t == c) {
+									countKeys++;
+									keys.add(test);
+									System.out.println(
+											"Found key at index: " + test + " count is: " + countKeys + " index is: " + index + " hash is " + key);
+								}
+							}
+						}
+					}
+				}
+			}
+			index++;
+		}
+		int z = 0;
+		for (int t : keys)
+		{
+			z++;
+			System.out.println(z + " key is: " + t);
+
+			if (z == 64)
+			{
+				break;
+			}
+		}
 	}
 
 	int[][] day13grid = new int[100][100];
@@ -28,7 +128,7 @@ public class TwentySixteen {
 	// int day13MinLength = 2000;
 	// part 2
 	int day13MinLength = 51;
-	
+
 	boolean canMove(int x, int y, int input) {
 		if (day13grid[x][y] == 0) {
 			int value = x * x + 3 * x + 2 * x * y + y + y * y + input;
@@ -39,35 +139,29 @@ public class TwentySixteen {
 				}
 			}
 			if (countBits % 2 == 0) {
-				day13grid[x][y] = 1; //space
+				day13grid[x][y] = 1; // space
 			} else {
-				day13grid[x][y] = 2; //wall
+				day13grid[x][y] = 2; // wall
 			}
 		}
 		return day13grid[x][y] == 1;
 	}
 
-	private void tryMove(int x, int y, int length, int input)
-	{
-		if (x < 0 || y < 0)
-		{
+	private void tryMove(int x, int y, int length, int input) {
+		if (x < 0 || y < 0) {
 			return;
 		}
-		if (length >= day13MinLength)
-		{
+		if (length >= day13MinLength) {
 			return;
 		}
-		if (x == 31 && y == 39)
-		{
-			if (length < day13MinLength)
-			{
+		if (x == 31 && y == 39) {
+			if (length < day13MinLength) {
 				System.out.println("Done, length is: " + length);
 				day13MinLength = length;
 			}
 			return;
 		}
-		if (!canMove(x, y, input))
-		{
+		if (!canMove(x, y, input)) {
 			return;
 		}
 		day13grid[x][y] = 3;
@@ -84,14 +178,11 @@ public class TwentySixteen {
 		int y = 1;
 		day13grid[x][y] = 1;
 		tryMove(x, y, 0, input);
-		
+
 		int count = 0;
-		for (int i = 0; i < day13grid.length; i++)
-		{
-			for (int j = 0; j < day13grid[0].length; j++)
-			{
-				if (day13grid[i][j] == 1)
-				{
+		for (int i = 0; i < day13grid.length; i++) {
+			for (int j = 0; j < day13grid[0].length; j++) {
+				if (day13grid[i][j] == 1) {
 					count++;
 				}
 			}

@@ -22,9 +22,35 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day14();
+		day15();
 	}
 
+	void day15()
+	{
+		int[] discSizes = {17, 19, 7, 13, 5, 3, 11};
+		int[] discStarts = {5, 8, 1, 7, 1, 0, 0};
+		int time = 0;
+		boolean found = false;
+		while (!found)
+		{
+			time++;
+			boolean bounced = false;
+			for (int i = 0; i < discSizes.length; i++)
+			{
+				if (((discStarts[i] + time + i + 1) % discSizes[i]) != 0)
+				{
+					bounced = true;
+					break;
+				}
+			}
+			if (!bounced)
+			{
+				found = true;
+			}
+		}
+		System.out.println("Found time: " + time);
+	}
+	
 	List<Character> findQuintuples(String hash) {
 		List<Character> result = new ArrayList<Character>();
 		int repeats = 0;

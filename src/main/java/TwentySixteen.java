@@ -22,7 +22,73 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day18();
+		day19();
+	}
+	
+	void day19()
+	{
+		int input = 3014603;
+		//int input = 5;
+		int elfCount = input;
+
+		boolean[] elves = new boolean[input];
+		int place = 0;
+		// day1
+		/*
+		 * 		int last = -1;
+
+		while (true)
+		{
+			last = place;
+			// System.out.println("Place is: " + (place + 1));
+			place = (place + 1) % input;
+			while(elves[place])
+			{
+				place = (place + 1) % input;
+			}
+			if (place == last) {
+				break;
+			}
+			elves[place] = true;
+			while(elves[place])
+			{
+				place = (place + 1) % input;
+			}
+		}
+		*/
+		int opposite = input / 2;
+		while (elfCount > 1)
+		{
+			elves[opposite] = true;
+			elfCount--;
+			// find our next present elf
+			place = (place + 1) % input;
+			while(elves[place])
+			{
+				place = (place + 1) % input;
+			}
+			// find our new opposite elf.
+			
+			int steal = place;
+			while (opposite > 0)
+			{
+				steal = (steal + 1) % input;
+				if (!elves[steal])
+				{
+					opposite--;
+				}	
+			}
+			elves[steal] = true;
+			//System.out.println("Place is: " + (place + 1) + " steal is: " + (steal + 1));
+
+			elfCount--;
+			place = (place + 1) % input;
+			while(elves[place])
+			{
+				place = (place + 1) % input;
+			}
+		}
+		System.out.println("Last is: " + (place + 1));
 	}
 	
 	void day18()

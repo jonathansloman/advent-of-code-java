@@ -22,7 +22,48 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day17();
+		day18();
+	}
+	
+	void day18()
+	{
+		String input = "^^.^..^.....^..^..^^...^^.^....^^^.^.^^....^.^^^...^^^^.^^^^.^..^^^^.^^.^.^.^.^.^^...^^..^^^..^.^^^^";
+		//int rows = 40;
+		int rows = 400000;
+		int count = 0;
+		for (int i = 0; i < input.length(); i++)
+		{
+			if (input.charAt(i) == '.') {
+				count++;
+			}
+		}
+		for (int r = 1; r < rows; r++)
+		{
+			String nextRow = "";
+			for (int i = 0; i < input.length(); i++)
+			{
+				boolean left = false;
+				if (i > 0) {
+					left = input.charAt(i - 1) == '^';
+				}
+					
+				boolean centre = input.charAt(i) == '^';
+				boolean right = false;
+				if (i  < input.length() - 1) {
+					right = input.charAt(i + 1) == '^';
+				}
+				if ((centre && left && !right) || (centre && !left && right) || (left && !centre && !right) || (!left && !centre && right))
+				{
+					nextRow += '^';
+				} else {
+					nextRow += '.';
+					count++;
+				}
+			}
+			input = nextRow;
+			//System.out.println("row: " + nextRow);
+		}
+		System.out.println("Count is: " + count);
 	}
 	
 	void findPath(MessageDigest md, int x, int y, String path, String input) throws IOException

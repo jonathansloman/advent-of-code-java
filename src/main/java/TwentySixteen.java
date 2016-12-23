@@ -68,24 +68,17 @@ public class TwentySixteen {
 				place = (place + 1) % input;
 			}
 			// find our new opposite elf.
-			
-			int steal = place;
-			while (opposite > 0)
-			{
-				steal = (steal + 1) % input;
-				if (!elves[steal])
-				{
-					opposite--;
-				}	
+			// if remaining elves is even, opposite must increment by 2 places, otherwise one.
+			opposite = (opposite + 1) % input;
+			while (elves[opposite]) {
+				opposite = (opposite + 1) % input;
 			}
-			elves[steal] = true;
-			//System.out.println("Place is: " + (place + 1) + " steal is: " + (steal + 1));
-
-			elfCount--;
-			place = (place + 1) % input;
-			while(elves[place])
+			if (elfCount % 2 == 0)
 			{
-				place = (place + 1) % input;
+				opposite = (opposite + 1) % input;
+				while (elves[opposite]) {
+					opposite = (opposite + 1) % input;
+				}
 			}
 		}
 		System.out.println("Last is: " + (place + 1));

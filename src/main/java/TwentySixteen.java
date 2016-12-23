@@ -22,7 +22,57 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day20();
+		day21();
+	}
+	
+	void day21() throws IOException {
+		String password = "abcdefgh";
+		
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day21.input"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (line.startsWith("swap position")) {
+				Pattern p = Pattern.compile("swap position (\\d+) with position (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int x = Integer.parseInt(m.group(1));
+				int y = Integer.parseInt(m.group(2));
+
+			} else if (line.startsWith("swap letter")) {
+				Pattern p = Pattern.compile("swap letter ([a-z]) with letter ([a-z])");
+				Matcher m = p.matcher(line);
+				m.find();			
+				String letter1 = m.group(1);
+				String letter2 = m.group(2);
+
+			} else if (line.startsWith("rotate based")) {
+				Pattern p = Pattern.compile("rotate based on position of letter ([a-z])");
+				Matcher m = p.matcher(line);
+				m.find();
+				String letter = m.group(1);
+			} else if (line.startsWith("rotate")) {
+				Pattern p = Pattern.compile("rotate (left|right) (\\d+) steps");
+				Matcher m = p.matcher(line);
+				m.find();
+				String direction = m.group(1);
+				int steps = Integer.parseInt(m.group(2));
+			} else if (line.startsWith("reverse")) {
+				Pattern p = Pattern.compile("reverse positions (\\d+) through (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int x = Integer.parseInt(m.group(1));
+				int y = Integer.parseInt(m.group(2));
+			} else if (line.startsWith("move")) {
+				Pattern p = Pattern.compile("move position (\\d+) to position (\\d+)");
+				Matcher m = p.matcher(line);
+				m.find();
+				int x = Integer.parseInt(m.group(1));
+				int y = Integer.parseInt(m.group(2));
+			}
+		}
+		br.close();
+		System.out.println("Password is now: " + password);
 	}
 
 	void day20() throws IOException {
@@ -101,6 +151,9 @@ public class TwentySixteen {
 			}
 			lastFree = ends.get(i) + 1;
 
+		}
+		if (ends.get(ends.size() - 1) < finalEnd) {
+			count += finalEnd - ends.get(ends.size() - 1);
 		}
 		System.out.println("lowest is: " + minAllowed + ", count is: " + count);
 	}

@@ -29,35 +29,80 @@ public class TwentySixteen {
 		long minAllowed = 0;
 		List<Long> starts = new ArrayList<Long>();
 		List<Long> ends = new ArrayList<Long>();
-		
+
+		long finalEnd = 4294967295L;
+
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day20.input"));
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			
+
 			Pattern p = Pattern.compile("(\\d+)-(\\d+)");
 			Matcher m = p.matcher(line);
 			m.find();
-			starts.add(Long.parseLong(m.group(1)));
-			ends.add(Long.parseLong(m.group(2)));
-			System.out.println("Start is: " + starts.get(starts.size() - 1) + " end is: " + ends.get(ends.size() - 1));
-		}
-		br.close();
-		boolean changed = true;
-		while (changed)
-		{
-			System.out.println("minAllowed is: " + minAllowed);
-			changed = false;
-			for (int i = 0; i < starts.size(); i++)
-			{
-				if (minAllowed >= starts.get(i) && minAllowed <= ends.get(i))
-				{
-					minAllowed = ends.get(i) + 1;
-					changed = true;
+			long start = Long.parseLong(m.group(1));
+			long end = Long.parseLong(m.group(2));
+			boolean found = false;
+			// check if we need to insert or amalgamate this entry
+			for (int i = 0; i < starts.size() && !found; i++) {
+				if (start <= starts.get(i)) {
+					found = true;
+					if (end < starts.get(i)) {
+						// whole new fragment to add
+						starts.add(i, start);
+						ends.add(i, end);
+					} else if (end < ends.get(i)) {
+						// extent start of fragment
+						starts.set(i, start);
+					} else {
+						// replace found fragment entirely
+						starts.set(i, start);
+						ends.set(i, end);
+					}
+				} else if (start <= ends.get(i)) {
+					found = true;
+					if (end > ends.get(i)) {
+						// extend end of fragment
+						ends.set(i, end);
+					} // otherwise masked
+				}
+				if (found) {
+					// amalgamate any future elements which may now be
+					// overlapping.
+					int j = i + 1;
+					while (j < starts.size() && starts.get(j) < ends.get(i)) {
+						if (ends.get(j) > ends.get(i)) {
+							ends.set(i, ends.get(j));
+						}
+						starts.remove(j);
+						ends.remove(j);
+					}
 				}
 			}
+			if (!found) {
+				starts.add(start);
+				ends.add(end);
+			}
+/*			System.out.println("New start/end: " + start + ", " + end);
+			for (int i = 0; i < starts.size(); i++) {
+				System.out.println("Fragment: " + starts.get(i) + ", " + ends.get(i));
+			}*/
 		}
-		System.out.println("lowest is: " + minAllowed);
+		br.close();
+		long count = 0;
+		long lastFree = 0;
+		for (int i = 0; i < starts.size(); i++)
+		{
+			if (starts.get(i) <= minAllowed) {
+				minAllowed = ends.get(i) + 1;
+			}
+			if (starts.get(i) > lastFree) {
+				count += starts.get(i) - lastFree;
+			}
+			lastFree = ends.get(i) + 1;
+
+		}
+		System.out.println("lowest is: " + minAllowed + ", count is: " + count);
 	}
 
 	void day19() {

@@ -22,59 +22,78 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day19();
+		day20();
 	}
-	
-	void day19()
-	{
+
+	void day20() throws IOException {
+		long minAllowed = 0;
+		List<Long> starts = new ArrayList<Long>();
+		List<Long> ends = new ArrayList<Long>();
+		
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day20.input"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			
+			Pattern p = Pattern.compile("(\\d+)-(\\d+)");
+			Matcher m = p.matcher(line);
+			m.find();
+			starts.add(Long.parseLong(m.group(1)));
+			ends.add(Long.parseLong(m.group(2)));
+			System.out.println("Start is: " + starts.get(starts.size() - 1) + " end is: " + ends.get(ends.size() - 1));
+		}
+		br.close();
+		boolean changed = true;
+		while (changed)
+		{
+			System.out.println("minAllowed is: " + minAllowed);
+			changed = false;
+			for (int i = 0; i < starts.size(); i++)
+			{
+				if (minAllowed >= starts.get(i) && minAllowed <= ends.get(i))
+				{
+					minAllowed = ends.get(i) + 1;
+					changed = true;
+				}
+			}
+		}
+		System.out.println("lowest is: " + minAllowed);
+	}
+
+	void day19() {
 		int input = 3014603;
-		//int input = 5;
+		// int input = 5;
 		int elfCount = input;
 
 		boolean[] elves = new boolean[input];
 		int place = 0;
 		// day1
 		/*
-		 * 		int last = -1;
-
-		while (true)
-		{
-			last = place;
-			// System.out.println("Place is: " + (place + 1));
-			place = (place + 1) % input;
-			while(elves[place])
-			{
-				place = (place + 1) % input;
-			}
-			if (place == last) {
-				break;
-			}
-			elves[place] = true;
-			while(elves[place])
-			{
-				place = (place + 1) % input;
-			}
-		}
-		*/
+		 * int last = -1;
+		 * 
+		 * while (true) { last = place; // System.out.println("Place is: " +
+		 * (place + 1)); place = (place + 1) % input; while(elves[place]) {
+		 * place = (place + 1) % input; } if (place == last) { break; }
+		 * elves[place] = true; while(elves[place]) { place = (place + 1) %
+		 * input; } }
+		 */
 		int opposite = input / 2;
-		while (elfCount > 1)
-		{
+		while (elfCount > 1) {
 			elves[opposite] = true;
 			elfCount--;
 			// find our next present elf
 			place = (place + 1) % input;
-			while(elves[place])
-			{
+			while (elves[place]) {
 				place = (place + 1) % input;
 			}
 			// find our new opposite elf.
-			// if remaining elves is even, opposite must increment by 2 places, otherwise one.
+			// if remaining elves is even, opposite must increment by 2 places,
+			// otherwise one.
 			opposite = (opposite + 1) % input;
 			while (elves[opposite]) {
 				opposite = (opposite + 1) % input;
 			}
-			if (elfCount % 2 == 0)
-			{
+			if (elfCount % 2 == 0) {
 				opposite = (opposite + 1) % input;
 				while (elves[opposite]) {
 					opposite = (opposite + 1) % input;
@@ -83,36 +102,32 @@ public class TwentySixteen {
 		}
 		System.out.println("Last is: " + (place + 1));
 	}
-	
-	void day18()
-	{
+
+	void day18() {
 		String input = "^^.^..^.....^..^..^^...^^.^....^^^.^.^^....^.^^^...^^^^.^^^^.^..^^^^.^^.^.^.^.^.^^...^^..^^^..^.^^^^";
-		//int rows = 40;
+		// int rows = 40;
 		int rows = 400000;
 		int count = 0;
-		for (int i = 0; i < input.length(); i++)
-		{
+		for (int i = 0; i < input.length(); i++) {
 			if (input.charAt(i) == '.') {
 				count++;
 			}
 		}
-		for (int r = 1; r < rows; r++)
-		{
+		for (int r = 1; r < rows; r++) {
 			String nextRow = "";
-			for (int i = 0; i < input.length(); i++)
-			{
+			for (int i = 0; i < input.length(); i++) {
 				boolean left = false;
 				if (i > 0) {
 					left = input.charAt(i - 1) == '^';
 				}
-					
+
 				boolean centre = input.charAt(i) == '^';
 				boolean right = false;
-				if (i  < input.length() - 1) {
+				if (i < input.length() - 1) {
 					right = input.charAt(i + 1) == '^';
 				}
-				if ((centre && left && !right) || (centre && !left && right) || (left && !centre && !right) || (!left && !centre && right))
-				{
+				if ((centre && left && !right) || (centre && !left && right) || (left && !centre && !right)
+						|| (!left && !centre && right)) {
 					nextRow += '^';
 				} else {
 					nextRow += '.';
@@ -120,30 +135,24 @@ public class TwentySixteen {
 				}
 			}
 			input = nextRow;
-			//System.out.println("row: " + nextRow);
+			// System.out.println("row: " + nextRow);
 		}
 		System.out.println("Count is: " + count);
 	}
-	
-	void findPath(MessageDigest md, int x, int y, String path, String input) throws IOException
-	{
-		if (path.length() >= day17Min)
-		{
-		// day 2	return;
+
+	void findPath(MessageDigest md, int x, int y, String path, String input) throws IOException {
+		if (path.length() >= day17Min) {
+			// day 2 return;
 		}
-		if (x < 0 || x > 3 || y < 0 || y > 3)
-		{
+		if (x < 0 || x > 3 || y < 0 || y > 3) {
 			return;
 		}
-		if (x == 3 && y == 3)
-		{
-			if (path.length() < day17Min)
-			{
+		if (x == 3 && y == 3) {
+			if (path.length() < day17Min) {
 				day17Min = path.length();
 				System.out.println("New minimum path: " + path);
 			}
-			if (path.length() > day17Max)
-			{
+			if (path.length() > day17Max) {
 				day17Max = path.length();
 			}
 			return;
@@ -153,67 +162,56 @@ public class TwentySixteen {
 		byte[] md5 = md.digest(key.getBytes("UTF-8"));
 		BigInteger bi = new BigInteger(1, md5);
 		String hash = String.format("%0" + (md5.length << 1) + "x", bi);
-		if (hash.charAt(0) - 'b' >= 0)
-		{
+		if (hash.charAt(0) - 'b' >= 0) {
 			findPath(md, x, y - 1, path + "U", input);
 		}
-		if (hash.charAt(1) - 'b' >= 0)
-		{
+		if (hash.charAt(1) - 'b' >= 0) {
 			findPath(md, x, y + 1, path + "D", input);
 		}
-		if (hash.charAt(2) - 'b' >= 0)
-		{
+		if (hash.charAt(2) - 'b' >= 0) {
 			findPath(md, x - 1, y, path + "L", input);
 		}
-		if (hash.charAt(3) - 'b' >= 0)
-		{
+		if (hash.charAt(3) - 'b' >= 0) {
 			findPath(md, x + 1, y, path + "R", input);
 		}
 	}
-	
+
 	int day17Min = 999;
 	int day17Max = 0;
-	void day17() throws IOException, NoSuchAlgorithmException
-	{
+
+	void day17() throws IOException, NoSuchAlgorithmException {
 		String input = "ioramepc";
 		MessageDigest md = MessageDigest.getInstance("MD5");
 
 		findPath(md, 0, 0, "", input);
 		System.out.println("Max length is: " + day17Max);
-		
+
 	}
 
-	void day16()
-	{
+	void day16() {
 		int targetLength = 35651584; // 272;
 		String input = "10011111011011001";
-		
-		while (input.length() < targetLength)
-		{
+
+		while (input.length() < targetLength) {
 			StringBuffer bSb = new StringBuffer();
-			for (int i = 0; i < input.length(); i++)
-			{
-				if (input.charAt(input.length() - i - 1) == '0')
-				{
+			for (int i = 0; i < input.length(); i++) {
+				if (input.charAt(input.length() - i - 1) == '0') {
 					bSb.append('1');
-				} else
-				{
+				} else {
 					bSb.append('0');
 				}
 			}
 			input = input + "0" + bSb.toString();
 		}
-		input = input.substring(0,  targetLength);
-		// System.out.println("Input is length: " + input.length() + " and is: " + input);
+		input = input.substring(0, targetLength);
+		// System.out.println("Input is length: " + input.length() + " and is: "
+		// + input);
 		boolean isEven = true;
 		String checksum = input;
-		while (isEven)
-		{
+		while (isEven) {
 			StringBuffer cSb = new StringBuffer();
-			for (int i = 0; i < checksum.length() / 2; i++)
-			{
-				if (checksum.charAt(i * 2) == checksum.charAt(i * 2 + 1))
-				{
+			for (int i = 0; i < checksum.length() / 2; i++) {
+				if (checksum.charAt(i * 2) == checksum.charAt(i * 2 + 1)) {
 					cSb.append('1');
 				} else {
 					cSb.append('0');
@@ -224,33 +222,28 @@ public class TwentySixteen {
 		}
 		System.out.println("Checksum is: " + checksum);
 	}
-	
-	void day15()
-	{
-		int[] discSizes = {17, 19, 7, 13, 5, 3, 11};
-		int[] discStarts = {5, 8, 1, 7, 1, 0, 0};
+
+	void day15() {
+		int[] discSizes = { 17, 19, 7, 13, 5, 3, 11 };
+		int[] discStarts = { 5, 8, 1, 7, 1, 0, 0 };
 		int time = 0;
 		boolean found = false;
-		while (!found)
-		{
+		while (!found) {
 			time++;
 			boolean bounced = false;
-			for (int i = 0; i < discSizes.length; i++)
-			{
-				if (((discStarts[i] + time + i + 1) % discSizes[i]) != 0)
-				{
+			for (int i = 0; i < discSizes.length; i++) {
+				if (((discStarts[i] + time + i + 1) % discSizes[i]) != 0) {
 					bounced = true;
 					break;
 				}
 			}
-			if (!bounced)
-			{
+			if (!bounced) {
 				found = true;
 			}
 		}
 		System.out.println("Found time: " + time);
 	}
-	
+
 	List<Character> findQuintuples(String hash) {
 		List<Character> result = new ArrayList<Character>();
 		int repeats = 0;
@@ -294,10 +287,11 @@ public class TwentySixteen {
 		int countKeys = 0;
 		int index = 0;
 		Map<Integer, List<Character>> triples = new HashMap<Integer, List<Character>>();
-		
+
 		SortedSet<Integer> keys = new TreeSet<Integer>();
 
-		// we go beyond 64 to make sure we get the 64 first as we don't find them in strict order.
+		// we go beyond 64 to make sure we get the 64 first as we don't find
+		// them in strict order.
 		while (countKeys < 80) {
 			md.reset();
 			String key = input + index;
@@ -305,8 +299,7 @@ public class TwentySixteen {
 				byte[] md5 = md.digest(key.getBytes("UTF-8"));
 				BigInteger bi = new BigInteger(1, md5);
 				key = String.format("%0" + (md5.length << 1) + "x", bi);
-				if (index == 0)
-				{
+				if (index == 0) {
 					System.out.println("hash iteration: " + i + " is " + key);
 				}
 			}
@@ -326,8 +319,8 @@ public class TwentySixteen {
 								if (t == c) {
 									countKeys++;
 									keys.add(test);
-									System.out.println(
-											"Found key at index: " + test + " count is: " + countKeys + " index is: " + index + " hash is " + key);
+									System.out.println("Found key at index: " + test + " count is: " + countKeys
+											+ " index is: " + index + " hash is " + key);
 								}
 							}
 						}
@@ -337,13 +330,11 @@ public class TwentySixteen {
 			index++;
 		}
 		int z = 0;
-		for (int t : keys)
-		{
+		for (int t : keys) {
 			z++;
 			System.out.println(z + " key is: " + t);
 
-			if (z == 64)
-			{
+			if (z == 64) {
 				break;
 			}
 		}

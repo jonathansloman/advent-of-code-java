@@ -25,54 +25,148 @@ public class TwentySixteen {
 		day21();
 	}
 	
-	void day21() throws IOException {
-		String password = "abcdefgh";
+	private char[] rotateArray(char[] arr, int steps) {
+		char[] result = new char[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			result[(i + steps) % arr.length] = arr[i];
+		}
 		
+		return result;
+	}
+	void day21() throws IOException {
+		// day 1
+		//String password = "abcdefgh";
+		 String password = "fbgdceah";
+		// day2 test case
+	    //String password = "gbhcefad"; 
+
+		char[] passwordArr = password.toCharArray();
+		List<String> instructions = new ArrayList<String>();
+
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day21.input"));
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			if (line.startsWith("swap position")) {
+			instructions.add(line);
+		}
+		// day 1 
+		// for (String instr : instructions) {
+		 //day2 
+		 for (int z = instructions.size() - 1; z >= 0; z--) {
+		 //day 2
+		 String instr = instructions.get(z);
+			if (instr.startsWith("swap position")) {
 				Pattern p = Pattern.compile("swap position (\\d+) with position (\\d+)");
-				Matcher m = p.matcher(line);
+				Matcher m = p.matcher(instr);
 				m.find();
 				int x = Integer.parseInt(m.group(1));
 				int y = Integer.parseInt(m.group(2));
+				// same day 1 and day2
+				char c = passwordArr[x];
+				passwordArr[x] = passwordArr[y];
+				passwordArr[y] = c;
 
-			} else if (line.startsWith("swap letter")) {
+			} else if (instr.startsWith("swap letter")) {
 				Pattern p = Pattern.compile("swap letter ([a-z]) with letter ([a-z])");
-				Matcher m = p.matcher(line);
+				Matcher m = p.matcher(instr);
 				m.find();			
-				String letter1 = m.group(1);
-				String letter2 = m.group(2);
-
-			} else if (line.startsWith("rotate based")) {
+				char letter1 = m.group(1).charAt(0);
+				char letter2 = m.group(2).charAt(0);
+				int place1 = -1;
+				int place2 = -1;
+				// same day1 and day2
+				for (int i = 0; i < passwordArr.length; i++) {
+					if (passwordArr[i] == letter1) {
+						place1 = i;
+					} else if (passwordArr[i] == letter2) {
+						place2 = i;
+					}
+				}
+				passwordArr[place1] = letter2;
+				passwordArr[place2] = letter1;
+			} else if (instr.startsWith("rotate based")) {
 				Pattern p = Pattern.compile("rotate based on position of letter ([a-z])");
-				Matcher m = p.matcher(line);
+				Matcher m = p.matcher(instr);
 				m.find();
-				String letter = m.group(1);
-			} else if (line.startsWith("rotate")) {
-				Pattern p = Pattern.compile("rotate (left|right) (\\d+) steps");
-				Matcher m = p.matcher(line);
+				char letter = m.group(1).charAt(0);
+				int index = -1;
+				for (int i = 0; i < passwordArr.length; i++) {
+					if (passwordArr[i] == letter) {
+						index = i;
+					}
+				}
+				// day 1
+/*
+				if (index >= 4) {
+					index++;
+				}
+				index++;
+				passwordArr = rotateArray(passwordArr, index % passwordArr.length);
+				*/
+				// day 2 - just try each place in turn and see what matches.
+				
+				int startPlace = -1;
+				for (int i = 0; i < passwordArr.length; i++) {
+					int place = i;
+					if (place >= 4) {
+						place++;
+					}
+					place++;
+					if (index == (i + place) % passwordArr.length) {
+						startPlace = i;
+					}
+				}
+				passwordArr = rotateArray(passwordArr, (startPlace + passwordArr.length - index) % passwordArr.length);
+				
+					
+			} else if (instr.startsWith("rotate")) {
+				Pattern p = Pattern.compile("rotate (left|right) (\\d+) step*");
+				Matcher m = p.matcher(instr);
 				m.find();
 				String direction = m.group(1);
 				int steps = Integer.parseInt(m.group(2));
-			} else if (line.startsWith("reverse")) {
+				// day 1 if (direction.equals("left")) {
+				if (direction.equals("right")) { // day 2
+					steps = passwordArr.length - steps;
+				}
+				passwordArr = rotateArray(passwordArr, steps % passwordArr.length);
+			} else if (instr.startsWith("reverse")) {
 				Pattern p = Pattern.compile("reverse positions (\\d+) through (\\d+)");
-				Matcher m = p.matcher(line);
+				Matcher m = p.matcher(instr);
 				m.find();
 				int x = Integer.parseInt(m.group(1));
 				int y = Integer.parseInt(m.group(2));
-			} else if (line.startsWith("move")) {
+				// no change day2
+				char[] newPassword = new char[passwordArr.length];
+				for (int i = 0; i < passwordArr.length; i++) {
+					if (i < x || i > y) {
+						newPassword[i] = passwordArr[i];
+					} else {
+						newPassword[i] = passwordArr[y - (i - x)];
+					}
+				}
+				passwordArr = newPassword;
+			} else if (instr.startsWith("move")) {
 				Pattern p = Pattern.compile("move position (\\d+) to position (\\d+)");
-				Matcher m = p.matcher(line);
+				Matcher m = p.matcher(instr);
 				m.find();
-				int x = Integer.parseInt(m.group(1));
-				int y = Integer.parseInt(m.group(2));
+				// day 1, reverse x and y for day 2
+				int y = Integer.parseInt(m.group(1));
+				int x = Integer.parseInt(m.group(2));
+				
+				char c = passwordArr[x];
+				for (int i = x + 1; i < passwordArr.length; i++) {
+					passwordArr[i - 1] = passwordArr[i];
+				}
+				for (int i = passwordArr.length - 1; i > y; i--) {
+					passwordArr[i] = passwordArr[i - 1];
+				}
+				passwordArr[y] = c;
 			}
+			System.out.println("Password now: " + new String(passwordArr) + " after doing: " + instr);
 		}
 		br.close();
-		System.out.println("Password is now: " + password);
+		System.out.println("Password is now: " + new String(passwordArr));
 	}
 
 	void day20() throws IOException {

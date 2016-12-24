@@ -22,7 +22,77 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day21();
+		day22();
+	}
+	
+	class Day22Node {
+		int x;
+		int y;
+		int size;
+		int used;
+		int available;
+		int percent;
+	}
+	
+	void drawNodes(Day22Node[][] grid, int width, int height) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				Day22Node n = grid[y][x];
+				if (n.size > 100) {
+					System.out.print("#");
+				} else if (n.used == 0) {
+					System.out.print("-");
+				} else {
+					System.out.print(".");
+				}
+			}
+			System.out.print("\n");
+		}
+	}
+	
+	void day22() throws IOException {
+//		Map<String, Day22Node> nodes = new HashMap<String, Day22Node>();
+		List<Day22Node> nodesList = new ArrayList<Day22Node>();
+		
+		Day22Node[][] nodeGrid = new Day22Node[35][30];
+		
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day22.input"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			Day22Node node = new Day22Node();
+			Pattern p = Pattern.compile("/dev/grid/node-x(\\d+)-y(\\d+)\\s+(\\d+)T\\s+(\\d+)T\\s+(\\d+)T\\s+(\\d+)%");
+			Matcher m = p.matcher(line);
+			m.find();
+			node.x = Integer.parseInt(m.group(1));
+			node.y = Integer.parseInt(m.group(2));
+			node.size = Integer.parseInt(m.group(3));
+			node.used = Integer.parseInt(m.group(4));
+			node.available = Integer.parseInt(m.group(5));
+			node.percent = Integer.parseInt(m.group(6));
+			nodesList.add(node);
+			nodeGrid[node.y][node.x] = node;
+		}
+		int count = 0;
+		for (int i = 0; i < nodesList.size(); i++) {
+			Day22Node n1 = nodesList.get(i);
+			if (n1.used == 0) {
+				continue;
+			}
+			for (int j = 0; j < nodesList.size(); j++) {
+				if (i == j) {
+					continue;
+				}
+				Day22Node n2 = nodesList.get(j);
+				if (n1.used <= n2.available) {
+					count++;
+				}
+				
+			}
+		}
+		System.out.println("count is: " + count);
+		drawNodes(nodeGrid, 30, 35);
+		// part 2-  easiest work out manually from output of above. Answer is 198 for my input.
 	}
 	
 	private char[] rotateArray(char[] arr, int steps) {

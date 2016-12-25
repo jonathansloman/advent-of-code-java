@@ -22,9 +22,120 @@ public class TwentySixteen {
 	}
 
 	public void run() throws Exception {
-		day24();
+		day25();
 	}
-	
+
+	void day25() throws IOException {
+		long[] registers = new long[4];
+		List<String> instructions = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day25.input"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			instructions.add(line);
+		}
+		br.close();
+		int start = 1;
+		boolean found = false;
+		while (!found) {
+			registers[0] = start;
+			int place = 0;
+			String output = "";
+			while (place < instructions.size()) {
+				String instr = instructions.get(place);
+				if (instr.startsWith("cpy")) {
+					try {
+						Pattern p = Pattern.compile("cpy ([a-d]|-?\\d+) ([a-d])");
+						Matcher m = p.matcher(instr);
+						m.find();
+						String valueStr = m.group(1);
+						String destination = m.group(2);
+						int reg = valueStr.charAt(0) - 'a';
+						long value;
+						if (reg < 0 || reg > 3) {
+							value = Long.parseLong(valueStr);
+						} else {
+							value = registers[reg];
+						}
+						int dest = destination.charAt(0) - 'a';
+						registers[dest] = value;
+					} catch (IllegalStateException e) {
+						System.out.println("Ignoring invalid copy: " + instr);
+					}
+					place++;
+
+				} else if (instr.startsWith("jnz")) {
+					int reg = instr.charAt(4) - 'a';
+					boolean isZero = false;
+					if (reg >= 0 && reg <= 3) {
+						if (registers[reg] == 0) {
+							isZero = true;
+						}
+					} else if (instr.charAt(4) == '0') {
+						isZero = true;
+					}
+					if (!isZero) {
+						int reg2 = instr.charAt(6) - 'a';
+						long jump;
+						if (reg2 >= 0 && reg2 <= 3) {
+							jump = registers[reg2];
+						} else {
+							jump = Long.parseLong(instr.substring(6));
+						}
+						place += jump;
+					} else {
+						place++;
+					}
+				} else if (instr.startsWith("inc")) {
+					int reg = instr.charAt(4) - 'a';
+					registers[reg]++;
+					place++;
+				} else if (instr.startsWith("dec")) {
+					int reg = instr.charAt(4) - 'a';
+					registers[reg]--;
+					place++;
+				} else if (instr.startsWith("tgl")) {
+					int reg = instr.charAt(4) - 'a';
+					int toToggle = (int) (place + registers[reg]);
+					if (toToggle >= 0 && toToggle < instructions.size()) {
+						String toggleInst = instructions.get(toToggle);
+						String newInst = "";
+						if (toggleInst.startsWith("jnz")) {
+							newInst = "cpy" + toggleInst.substring(3);
+						} else if (toggleInst.startsWith("cpy")) {
+							newInst = "jnz" + toggleInst.substring(3);
+						} else if (toggleInst.startsWith("inc")) {
+							newInst = "dec" + toggleInst.substring(3);
+						} else {
+							newInst = "inc" + toggleInst.substring(3);
+						}
+						instructions.set(toToggle, newInst);
+					}
+					place++;
+				} else if (instr.startsWith("out")) {
+					int reg = instr.charAt(4) - 'a';
+					// can be a number, but puzzle only has register so be lazy
+					output = output + registers[reg];
+					if (!"010101010101010101010".startsWith(output)) {
+						break;
+					}
+					// System.out.println("Output is: " + output);
+					if (output.length() > 20) {
+						if (output.equals("010101010101010101010")) {
+							found = true;
+						}
+						System.out.println("Output: " + output + " for start: " + start);
+						break;
+					}
+					place++;
+
+				}
+			}
+			start++;
+		}
+		System.out.println("vale is: " + start);
+	}
+
 	void drawGrid(char[][] grid) {
 		StringBuffer sb = new StringBuffer();
 		for (int y = 0; y < grid.length; y++) {
@@ -35,7 +146,7 @@ public class TwentySixteen {
 		}
 		System.out.println(sb.toString());
 	}
-	
+
 	char[][] copyGrid(char[][] arr) {
 		char[][] ret = new char[arr.length][arr[0].length];
 		for (int x = 0; x < arr.length; x++) {
@@ -50,14 +161,14 @@ public class TwentySixteen {
 		int x;
 		int y;
 		int length;
-		
+
 		Day24State(int x, int y, int length) {
 			this.x = x;
 			this.y = y;
 			this.length = length;
 		}
 	}
-	
+
 	void findPath(int location, String path, int length) {
 		if (path.length() == 8) {
 			length = length + pathLengths[location][0]; // part 2, return to 0
@@ -70,21 +181,21 @@ public class TwentySixteen {
 			return;
 		}
 		for (int i = 1; i < 8; i++) {
-			char c = (char)('0' + i);
+			char c = (char) ('0' + i);
 			if (path.indexOf(c) != -1) {
 				continue;
 			}
 			findPath(i, path + c, length + pathLengths[location][i]);
 		}
 	}
-	
+
 	int day24Min = 999999;
-	int[][] pathLengths = new int[8][8]; // there are 8 locations, 0 to 7 in the input
+	int[][] pathLengths = new int[8][8]; // there are 8 locations, 0 to 7 in the
+											// input
 
 	void day24() throws IOException {
 		char[][] grid = new char[41][185];
-		
-		
+
 		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day24.input"));
 		int y = 0;
 		String line = null;
@@ -98,13 +209,13 @@ public class TwentySixteen {
 		br.close();
 		drawGrid(grid);
 		for (int startPlace = 0; startPlace < 7; startPlace++) {
-			char[][]grid2 = copyGrid(grid);
+			char[][] grid2 = copyGrid(grid);
 			int startx = -1;
 			int starty = -1;
 			// find start location
 			for (int x1 = 0; x1 < 185; x1++) {
 				for (int y1 = 0; y1 < 41; y1++) {
-					if (grid2[y1][x1] == (char)('0' + startPlace)) {
+					if (grid2[y1][x1] == (char) ('0' + startPlace)) {
 						startx = x1;
 						starty = y1;
 					}
@@ -128,7 +239,7 @@ public class TwentySixteen {
 					continue;
 				}
 				if (grid2[s.y][s.x] != '.') {
-					int end = (int)(grid2[s.y][s.x] - '0');
+					int end = (int) (grid2[s.y][s.x] - '0');
 					if (pathLengths[startPlace][end] == 0) {
 						pathLengths[startPlace][end] = s.length;
 						pathLengths[end][startPlace] = s.length;
@@ -144,13 +255,14 @@ public class TwentySixteen {
 				q.add(new Day24State(s.x, s.y - 1, s.length + 1));
 			}
 		}
-		// now we have a fully filled in set of distances, need to find shortest path from 0
+		// now we have a fully filled in set of distances, need to find shortest
+		// path from 0
 		// to get all - standard recursive backtracking should work here.
 		day24Min = 999999;
 		findPath(0, "0", 0);
-		System.out.println("Min path is: " + day24Min);		
+		System.out.println("Min path is: " + day24Min);
 	}
-	
+
 	void day23() throws IOException {
 		long[] registers = new long[4];
 		registers[0] = 12;// day 1 7;
@@ -202,7 +314,7 @@ public class TwentySixteen {
 					if (reg2 >= 0 && reg2 <= 3) {
 						jump = registers[reg2];
 					} else {
-					   jump = Long.parseLong(instr.substring(6));
+						jump = Long.parseLong(instr.substring(6));
 					}
 					place += jump;
 				} else {
@@ -218,7 +330,7 @@ public class TwentySixteen {
 				place++;
 			} else if (instr.startsWith("tgl")) {
 				int reg = instr.charAt(4) - 'a';
-				int toToggle = (int)(place + registers[reg]);
+				int toToggle = (int) (place + registers[reg]);
 				if (toToggle >= 0 && toToggle < instructions.size()) {
 					String toggleInst = instructions.get(toToggle);
 					String newInst = "";

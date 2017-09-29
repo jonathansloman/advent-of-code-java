@@ -28,7 +28,7 @@ public class TwentySixteen {
 	void day25() throws IOException {
 		long[] registers = new long[4];
 		List<String> instructions = new ArrayList<String>();
-		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16day25.input"));
+		BufferedReader br = new BufferedReader(new FileReader("src/main/resources/16daybonus.input"));
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			line = line.trim();

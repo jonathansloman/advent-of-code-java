@@ -31,7 +31,7 @@ public class Advent {
 		System.out.println("Started: ");
 		Advent a = new Advent();
 		startTime = System.currentTimeMillis();
-		TwentySixteen b = new TwentySixteen();
+		Twenty19 b = new Twenty19();
 		b.run();
 		// a.day1();
 		// a.day2();

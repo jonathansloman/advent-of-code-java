@@ -8,7 +8,7 @@ repositories {
 //	maven { url 'http://nexus.jupiter.bbc.co.uk:8081/nexus/content/repositories/snapshots' }
 }
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0.0'
 
 dependencies {
